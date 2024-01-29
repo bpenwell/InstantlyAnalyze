@@ -26,7 +26,7 @@ root.render(
     <HashRouter>
       <div>
         <Route path="/">
-            <NavBar/>
+          <NavBar/>
         </Route>
         <Switch>
           <Route exact path="/">
