@@ -1,36 +1,50 @@
 import { createRoot } from 'react-dom/client';
-import React from 'react';
+import React, { Fragment } from 'react';
 import './index.css';
 import reportWebVitals from './reportWebVitals';
 import { PageProps, Page } from '@bpenwell/rei-components';
-import { ROUTER_ELEMENTS, Layout } from '@bpenwell/rei-layouts';
 import {
-  createBrowserRouter,
-  createRoutesFromElements,
-  RouterProvider,
+  ContactUs,
+  Tools,
+  Home,
+  NavBar,
+  PageNotFound
+} from '@bpenwell/rei-layouts';
+import {
+  HashRouter,
+  Route,
+  Switch
 } from 'react-router-dom';
-
-/*const props: PageProps = {
-  onCreateAccount: () => {},
-  onLogin: () => {},
-  onLogout: () => {},
-};*/
-//      <Page {...props} />
-
-
-//Generates React Router
-const router = createBrowserRouter(ROUTER_ELEMENTS);
-
+// Generate React Router with HashRouter
+//const router = createHashRouter(ROUTER_ELEMENTS);
 
 const container = document.getElementById('root');
-const root = createRoot(container!); // createRoot(container!) if you use TypeScript
+const root = createRoot(container!);
+
 root.render(
   <React.StrictMode>
-    <RouterProvider router={router}/>
-    </React.StrictMode>,
+    <HashRouter>
+      <div>
+        <Route path="/">
+            <NavBar/>
+        </Route>
+        <Switch>
+          <Route exact path="/">
+            <Home/>
+          </Route>
+          <Route exact path="/tools/:toolName">
+            <Tools/>
+          </Route>
+          <Route exact path="/contact-us">
+            <ContactUs/>
+          </Route>
+        <Route path="*">
+          <PageNotFound/>
+        </Route>
+        </Switch>
+      </div>
+    </HashRouter>
+  </React.StrictMode>,
 );
 
-// If you want to start measuring performance in your app, pass a function
-// to log results (for example: reportWebVitals(console.log))
-// or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
 reportWebVitals();
