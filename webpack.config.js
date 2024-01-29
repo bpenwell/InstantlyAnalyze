@@ -40,6 +40,9 @@ module.exports = {
   ],
   resolve: {
     extensions: ['.ts', '.tsx', '.js', '.jsx'],
+    alias: {
+        'react-router-dom': path.resolve('./node_modules/react-router-dom')
+    }
   },
   devServer: {
     static: path.resolve(__dirname, 'dist'),

@@ -32,7 +32,7 @@ root.render(
           <Route exact path="/">
             <Home/>
           </Route>
-          <Route exact path="/tools/:toolName">
+          <Route path="/tools/:toolId/:instanceId?">
             <Tools/>
           </Route>
           <Route exact path="/contact-us">
