@@ -23,6 +23,7 @@
     "watch": "npm-run-all --parallel watch:*",
     "watch:REI-Layouts": "cd ../REI-Layouts && npm run build",
     "watch:REI-Components": "cd ../REI-Components && npm run build",
+    "watch:REI-Module": "cd ../REI-Module && npm run build",
     "build": "webpack --mode development",
     "server": "webpack-dev-server --mode development --open --watch",
     "test": "react-scripts test",

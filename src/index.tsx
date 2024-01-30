@@ -8,7 +8,10 @@ import {
   Tools,
   Home,
   NavBar,
-  PageNotFound
+  PageNotFound,
+  Footer,
+  Login,
+  SignUp,
 } from '@bpenwell/rei-layouts';
 import {
   HashRouter,
@@ -25,7 +28,7 @@ root.render(
   <React.StrictMode>
     <HashRouter>
       <div>
-        <Route path="/">
+        <Route path="/*">
           <NavBar/>
         </Route>
         <Switch>
@@ -38,10 +41,19 @@ root.render(
           <Route exact path="/contact-us">
             <ContactUs/>
           </Route>
+          <Route exact path="/login">
+            <Login/>
+          </Route>
+          <Route exact path="/signup">
+            <SignUp/>
+          </Route>
         <Route path="*">
           <PageNotFound/>
         </Route>
         </Switch>
+        <Route path="/*">
+          <Footer/>
+        </Route>
       </div>
     </HashRouter>
   </React.StrictMode>,
