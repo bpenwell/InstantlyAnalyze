@@ -5,6 +5,7 @@
   "dependencies": {
     "@bpenwell/rei-components": "file:../REI-Components",
     "@bpenwell/rei-layouts": "file:../REI-Layouts",
+    "@bpenwell/rei-module": "file:../REI-Module",
     "@testing-library/react": "^14.1.2",
     "@types/jest": "^29.5.11",
     "@types/node": "^20.11.6",
