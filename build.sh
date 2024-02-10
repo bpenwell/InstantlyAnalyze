@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Absolute path to the root directory
-root_path="C:\Users\benpe\Coding\REI-Project\REI-App-Root"
+root_path="..\REI-Tool"
 
 # Navigate to the root directory
 cd "$root_path" || exit
