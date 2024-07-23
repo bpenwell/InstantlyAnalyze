@@ -1,75 +1,44 @@
 import React, { useState } from 'react';
 import './index.css';
-import {
-  Footer,
-  AuthenticatedPage,
-  IAuthenticatedPageProps
-} from '@bpenwell/rei-components';
-import {
-  ContactUs,
-  Tools,
-  Home,
-  NavBar,
-  PageNotFound,
-  Login,
-  SignUp,
-  Dashboard,
-  Preferences,
-} from '@bpenwell/rei-layouts';
-import {
-  BrowserRouter,
-  Route,
-  Switch
-} from 'react-router-dom';
+import { BrowserRouter, Route, Routes } from 'react-router-dom';
+import { Footer, AuthenticatedPage, IAuthenticatedPageProps, ErrorBoundary } from '@bpenwell/rei-components';
+import { ContactUs, Tools, Home, NavBar, PageNotFound, Login, SignUp, Dashboard, Preferences } from '@bpenwell/rei-layouts';
+import { IUserData } from '@bpenwell/rei-module';
 
 export const App = () => {
-    const [token, setToken] = useState<String>();
+    const [user, setUser] = useState<IUserData>();
 
     const authenticatedPageProps: IAuthenticatedPageProps = {
-        token,
-        setToken
+        user,
+        setUser
     };
 
     return (
         <React.StrictMode>
+            <ErrorBoundary>
                 <BrowserRouter>
-                    <div>
-                    <Route path="/*">
-                        <NavBar token={token}/>
-                    </Route>
-                    <Switch>
-                        <Route exact path="/">
-                            <Home/>
-                        </Route>
-                        <Route path="/tools/:toolId/:pageId?/:instanceId?" component={Tools}/>
-                        <Route exact path="/contact-us">
-                            <ContactUs/>
-                        </Route>
-                        <Route exact path="/login">
-                            <Login/>
-                        </Route>
-                        <Route exact path="/signup">
-                            <SignUp/>
-                        </Route>
-                        <Route exact path="/dashboard">
+                    <NavBar user={user} />
+                    <Routes>
+                        <Route path="/" element={<Home />} />
+                        <Route path="/tools/:toolId/:pageId?/:instanceId?" element={<Tools />} />
+                        <Route path="/contact-us" element={<ContactUs />} />
+                        <Route path="/login" element={<Login />} />
+                        <Route path="/signup" element={<SignUp />} />
+                        <Route path="/dashboard" element={
                             <AuthenticatedPage props={authenticatedPageProps}>
-                                <Dashboard/>
+                                <Dashboard />
                             </AuthenticatedPage>
-                        </Route>
-                        <Route exact path="/preferences">
+                        } />
+                        <Route path="/preferences" element={
                             <AuthenticatedPage props={authenticatedPageProps}>
-                                <Preferences/>
+                                <Preferences />
                             </AuthenticatedPage>
-                        </Route>
-                        <Route path="*">
-                            <PageNotFound/>
-                        </Route>
-                    </Switch>
-                    <Route path="/*">
-                        <Footer/>
-                    </Route>
-                    </div>
+                        } />
+                        <Route path="*" element={<PageNotFound />} />
+                    </Routes>
+                    <Footer />
                 </BrowserRouter>
+            </ErrorBoundary>
         </React.StrictMode>
     );
 }

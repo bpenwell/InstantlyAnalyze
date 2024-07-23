@@ -1,18 +1,23 @@
 #!/bin/bash
 
 # Absolute path to the root directory
-root_path="..\REI-Tool"
+root_path="C:\Users\benpe\Coding\REI-Project\REI-Tool"
 
 # Navigate to the root directory
 cd "$root_path" || exit
 
-npm run watch & 
+# Run npm scripts in the background and continue execution
+npm run clean
+npm run install 
+npm run build
+npm run watch &
+npm run server &
 
-npm run build & 
+# Wait for background processes to complete
+wait
 
-# npm run server || { echo "Error: Failed to run npm run server in $folder"; exit 1; }
+# Run the server but continue execution even if it fails
+npm run server || { echo "Error: Failed to run npm run server"; true; }
 
-# This allows us to take advantage of express in order to handle client-side redirection
-# That way we don't run into issues with `GET /.../ `
-# The only downside is that changes dont hot-reload properly
-npm run start || { echo "Error: Failed to run npm run start in $folder"; exit 1; }
+# The only downside is that changes don't hot-reload properly
+npm run start || { echo "Error: Failed to run npm run start"; true; }
