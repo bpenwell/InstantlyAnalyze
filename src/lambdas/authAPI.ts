@@ -6,7 +6,7 @@ import { hash, genSalt, compare } from 'bcryptjs'; // Import bcrypt functions
 const dynamodb = new DynamoDB.DocumentClient();
 
 export const handler = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
-  const { operation, emailAddress, password, firstName, lastName, gender, dateOfBirth } = event;
+  const { operation, emailAddress, password, firstName, lastName, gender, dateOfBirth } = event as any;
 
   try {
     switch (operation) {

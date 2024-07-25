@@ -1,23 +1,99 @@
 #!/bin/bash
 
+# Color codes
+MAGENTA='\033[0;35m'
+GREEN='\033[0;32m'
+RED='\033[0;31m'
+NC='\033[0m' # No Color
+
 # Absolute path to the root directory
-root_path="C:\Users\benpe\Coding\REI-Project\REI-Tool"
+root_path="C:\Users\bpenwell\Documents\GitHub\REI\REI-Tool"
 
 # Navigate to the root directory
 cd "$root_path" || exit
 
-# Run npm scripts in the background and continue execution
-npm run clean
-npm run install 
-npm run build
-npm run watch &
-npm run server &
+# Function to display usage
+usage() {
+  echo -e "${RED}Usage: $0 [--install] [--clean] [--quiet]${NC}"
+  exit 1
+}
+
+# Parse parameters
+install=false
+clean=false
+quiet=false
+
+while [[ "$#" -gt 0 ]]; do
+  case $1 in
+    --install) install=true ;;
+    --clean) clean=true ;;
+    --quiet) quiet=true ;;
+    *) usage ;;
+  esac
+  shift
+done
+
+# Function to build a package
+build_package() {
+    local package_name=$1
+    echo -e "${MAGENTA}[Build][$package_name]${NC}"
+    cd "../$package_name" || exit
+
+    # Determine if output should be hidden
+    local output_redirect
+    if [ "$quiet" = true ]; then
+        output_redirect="> /dev/null 2>&1"
+    else
+        output_redirect=""
+    fi
+
+    # Run clean if --clean parameter is provided
+    if [ "$clean" = true ]; then
+        echo -e "${GREEN}Running clean...${NC}"
+        eval "npm run clean $output_redirect" || { echo -e "${RED}Error: Failed to clean $package_name${NC}"; exit 1; }
+    fi
+
+    # Run install if --install parameter is provided
+    if [ "$install" = true ]; then
+        echo -e "${GREEN}Running install...${NC}"
+        eval "npm i $output_redirect" || { echo -e "${RED}Error: Failed to install $package_name${NC}"; exit 1; }
+    fi
+
+    echo -e "${GREEN}Running build...${NC}"
+    eval "npm run build $output_redirect" || { echo -e "${RED}Error: Failed to build $package_name${NC}"; exit 1; }
+}
+
+# Function to watch a package
+server_package() {
+    local package_name=$1
+    echo -e "${MAGENTA}[Server][$package_name]${NC}"
+    cd "../$package_name" || exit
+
+    # Determine if output should be hidden
+    local output_redirect
+    if [ "$quiet" = true ]; then
+        output_redirect="> /dev/null 2>&1"
+    else
+        output_redirect=""
+    fi
+
+    eval "npm run server $output_redirect" &
+}
+
+# Build each subpackage
+build_package "REI-Module"
+build_package "REI-Components"
+build_package "REI-Layouts"
+build_package "REI-Tool"
+
+echo -e "${GREEN}Running server...${NC}"
+server_package "REI-Module" & 
+server_package "REI-Components" & 
+server_package "REI-Layouts" &
+server_package "REI-Tool" &
 
 # Wait for background processes to complete
 wait
 
-# Run the server but continue execution even if it fails
-npm run server || { echo "Error: Failed to run npm run server"; true; }
-
-# The only downside is that changes don't hot-reload properly
-npm run start || { echo "Error: Failed to run npm run start"; true; }
+# Run the start command and handle errors
+eval "npm run start $output_redirect" || { echo -e "${RED}Error: Failed to run npm run start${NC}"; true; }

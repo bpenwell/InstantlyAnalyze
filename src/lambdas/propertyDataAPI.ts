@@ -17,7 +17,7 @@ export const handler = async (event: APIGatewayProxyEvent): Promise<APIGatewayPr
     console.log('Received event:', JSON.stringify(event));
 
     let body;
-    let statusCode = '200';
+    let statusCode = 200;
     const headers = {
         'Content-Type': 'application/json',
     };
