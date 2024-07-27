@@ -22,6 +22,10 @@
     "web-vitals": "^3.5.1"
   },
   "scripts": {
+    "reactStart": "react-scripts start",
+    "reactBuild": "react-scripts build",
+    "reactTest": "react-scripts test",
+    "reactEject": "react-scripts eject",
     "start": "node server.js",
     "lint": "eslint .",
     "devServer": "webpack-dev-server --mode development --open --watch",
