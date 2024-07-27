@@ -2,8 +2,20 @@ import React, { useState } from 'react';
 import './index.css';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import { Footer, AuthenticatedPage, IAuthenticatedPageProps, ErrorBoundary } from '@bpenwell/rei-components';
-import { ContactUs, Tools, Home, NavBar, PageNotFound, Login, SignUp, Dashboard, Preferences } from '@bpenwell/rei-layouts';
-import { IUserData } from '@bpenwell/rei-module';
+import { ContactUs,
+    Tools,
+    Home,
+    NavBar,
+    PageNotFound,
+    Login,
+    SignUp,
+    Dashboard,
+    Preferences,
+    RentalCalculatorTool,
+    RentEstimatorTool,
+    BRRRRCalculatorTool
+ } from '@bpenwell/rei-layouts';
+import { IUserData, KNOWN_TOOL_NAMES } from '@bpenwell/rei-module';
 
 export const App = () => {
     const [user, setUser] = useState<IUserData>();
@@ -18,9 +30,14 @@ export const App = () => {
             <ErrorBoundary>
                 <BrowserRouter>
                     <NavBar user={user} />
-                    <Routes>
+                    <Routes >
                         <Route path="/" element={<Home />} />
-                        <Route path="/tools/:toolId/:pageId?/:instanceId?" element={<Tools />} />
+                        <Route path="/tools">
+                            <Route path={KNOWN_TOOL_NAMES.RENTAL_CALCULATOR} element={<RentalCalculatorTool />}/>
+                            <Route path={KNOWN_TOOL_NAMES.RENT_ESTIMATOR} element={<RentEstimatorTool />}/>
+                            <Route path={KNOWN_TOOL_NAMES.BRRRR_CALCULATOR} element={<BRRRRCalculatorTool />}/>
+                            <Route index element={<Tools />} />
+                        </Route>
                         <Route path="/contact-us" element={<ContactUs />} />
                         <Route path="/login" element={<Login />} />
                         <Route path="/signup" element={<SignUp />} />
