@@ -7,7 +7,7 @@ RED='\033[0;31m'
 NC='\033[0m' # No Color
 
 # Absolute path to the root directory
-root_path="C:\Users\bpenwell\Documents\GitHub\REI\REI-Tool"
+root_path="C:\Users\benpe\Coding\REI-Project\REI-Tool"
 
 # Navigate to the root directory
 cd "$root_path" || exit
