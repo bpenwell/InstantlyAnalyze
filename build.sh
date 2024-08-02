@@ -7,15 +7,22 @@ RED='\033[0;31m'
 NC='\033[0m' # No Color
 
 # Absolute path to the root directory
-root_path="C:\Users\benpe\Coding\REI-Project\REI-Tool"
+root_path="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 # Navigate to the root directory
 cd "$root_path" || exit
 
-# Function to display usage
-usage() {
-  echo -e "${RED}Usage: $0 [--install] [--clean] [--quiet]${NC}"
-  exit 1
+# Function to display help
+show_help() {
+  echo -e "${GREEN}Usage: $0 [options]${NC}"
+  echo
+  echo "Options:"
+  echo "  --help        Show this help message and exit"
+  echo "  --install     Install dependencies before building"
+  echo "  --clean       Clean the build directory before building"
+  echo "  --quiet       Suppress output messages"
+  echo
+  exit 0
 }
 
 # Parse parameters
@@ -25,10 +32,11 @@ quiet=false
 
 while [[ "$#" -gt 0 ]]; do
   case $1 in
+    --help) show_help ;;
     --install) install=true ;;
     --clean) clean=true ;;
     --quiet) quiet=true ;;
-    *) usage ;;
+    *) echo -e "${RED}Unknown option: $1${NC}"; show_help ;;
   esac
   shift
 done
