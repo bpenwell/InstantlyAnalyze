@@ -29,6 +29,8 @@ show_help() {
 install=false
 clean=false
 quiet=false
+prune=false
+auditFix=false
 
 while [[ "$#" -gt 0 ]]; do
   case $1 in
@@ -36,7 +38,9 @@ while [[ "$#" -gt 0 ]]; do
     --install) install=true ;;
     --clean) clean=true ;;
     --quiet) quiet=true ;;
-    *) echo -e "${RED}Unknown option: $1${NC}"; show_help ;;
+    --prune) prune=true ;;
+    --auditFix) auditFix=true ;;
+    *) usage ;;
   esac
   shift
 done
@@ -61,10 +65,22 @@ build_package() {
         eval "npm run clean $output_redirect" || { echo -e "${RED}Error: Failed to clean $package_name${NC}"; exit 1; }
     fi
 
+    # Run clean if --clean parameter is provided
+    if [ "$prune" = true ]; then
+        echo -e "${GREEN}Running prune...${NC}"
+        eval "npm prune $output_redirect" || { echo -e "${RED}Error: Failed to clean $package_name${NC}"; exit 1; }
+    fi
+
     # Run install if --install parameter is provided
     if [ "$install" = true ]; then
         echo -e "${GREEN}Running install...${NC}"
         eval "npm i $output_redirect" || { echo -e "${RED}Error: Failed to install $package_name${NC}"; exit 1; }
+    fi
+    
+    # Run install if --install parameter is provided
+    if [ "$auditFix" = true ]; then
+        echo -e "${GREEN}Running audit fix...${NC}"
+        eval "npm audit fix $output_redirect" || { echo -e "${RED}Error: Failed to audit fix $package_name${NC}"; exit 1; }
     fi
 
     echo -e "${GREEN}Running build...${NC}"

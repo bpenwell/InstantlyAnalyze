@@ -27,24 +27,11 @@
     "devServer": "webpack-dev-server --mode development --open --watch",
     "server": "webpack --mode development --watch",
     "buildProduction": "webpack --mode production",
-    "install": "npm-run-all --parallel install:*",
-    "install:REI-Layouts": "cd ../REI-Layouts && npm i",
-    "install:REI-Components": "cd ../REI-Components && npm i",
-    "install:REI-Module": "cd ../REI-Module && npm i",
-    "build": "webpack",
-    "build:REI-Layouts": "cd ../REI-Layouts && npx tsc",
-    "build:REI-Components": "cd ../REI-Components && npx tsc",
-    "build:REI-Module": "cd ../REI-Module && npx tsc",
+    "build": "npx tsc && webpack",
     "subPackageServer": "npm-run-all --parallel watch:*",
-    "subPackageServer:REI-Layouts": "cd ../REI-Layouts && npm run build",
-    "subPackageServer:REI-Components": "cd ../REI-Components && npm run build",
-    "subPackageServer:REI-Module": "cd ../REI-Module && npm run build",
     "test": "react-scripts test",
     "cleanRoot": "del /q package-lock.json && rd /s /q dist && rd /s /q node_modules",
-    "clean": "npm-run-all --parallel watch:*",
-    "clean:REI-Layouts": "cd ../REI-Layouts && del /q package-lock.json && rd /s /q dist",
-    "clean:REI-Components": "cd ../REI-Components && del /q package-lock.json && rd /s /q dist",
-    "clean:REI-Module": "cd ../REI-Module && del /q package-lock.json && rd /s /q dist"
+    "clean": "rm -rf dist package-lock.json"
   },
   "eslintConfig": {
     "extends": [
