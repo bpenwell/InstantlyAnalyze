@@ -21,7 +21,7 @@ show_help() {
   echo "  --install     Install dependencies before building"
   echo "  --clean       Clean the build directory before building"
   echo "  --quiet       Suppress output messages"
-  echo
+  echo 
   exit 0
 }
 
