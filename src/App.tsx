@@ -13,7 +13,8 @@ import { ContactUs,
     Preferences,
     RentalCalculatorTool,
     RentEstimatorTool,
-    BRRRRCalculatorTool
+    BRRRRCalculatorTool,
+    ComprehensivePropertyAnalysis,
  } from '@bpenwell/rei-layouts';
 import { IUserData, KNOWN_TOOL_NAMES } from '@bpenwell/rei-module';
 
@@ -36,6 +37,7 @@ export const App = () => {
                             <Route path={KNOWN_TOOL_NAMES.RENTAL_CALCULATOR} element={<RentalCalculatorTool />}/>
                             <Route path={KNOWN_TOOL_NAMES.RENT_ESTIMATOR} element={<RentEstimatorTool />}/>
                             <Route path={KNOWN_TOOL_NAMES.BRRRR_CALCULATOR} element={<BRRRRCalculatorTool />}/>
+                            <Route path={KNOWN_TOOL_NAMES.COMPREHENSIVE_PROPERTY_ANALYSIS} element={<ComprehensivePropertyAnalysis />}/>
                             <Route index element={<Tools />} />
                         </Route>
                         <Route path="/contact-us" element={<ContactUs />} />
