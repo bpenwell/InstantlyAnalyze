@@ -16,6 +16,7 @@ import { ContactUs,
     BRRRRCalculatorTool
  } from '@bpenwell/rei-layouts';
 import { IUserData, KNOWN_TOOL_NAMES } from '@bpenwell/rei-module';
+import { Authenticator } from '@bpenwell/rei-components/src';
 
 export const App = () => {
     const [user, setUser] = useState<IUserData>();
@@ -28,33 +29,35 @@ export const App = () => {
     return (
         <React.StrictMode>
             <ErrorBoundary>
-                <BrowserRouter>
-                    <NavBar user={user} />
-                    <Routes >
-                        <Route path="/" element={<Home />} />
-                        <Route path="/tools">
-                            <Route path={KNOWN_TOOL_NAMES.RENTAL_CALCULATOR} element={<RentalCalculatorTool />}/>
-                            <Route path={KNOWN_TOOL_NAMES.RENT_ESTIMATOR} element={<RentEstimatorTool />}/>
-                            <Route path={KNOWN_TOOL_NAMES.BRRRR_CALCULATOR} element={<BRRRRCalculatorTool />}/>
-                            <Route index element={<Tools />} />
-                        </Route>
-                        <Route path="/contact-us" element={<ContactUs />} />
-                        <Route path="/login" element={<Login />} />
-                        <Route path="/signup" element={<SignUp />} />
-                        <Route path="/dashboard" element={
-                            <AuthenticatedPage props={authenticatedPageProps}>
-                                <Dashboard />
-                            </AuthenticatedPage>
-                        } />
-                        <Route path="/preferences" element={
-                            <AuthenticatedPage props={authenticatedPageProps}>
-                                <Preferences />
-                            </AuthenticatedPage>
-                        } />
-                        <Route path="*" element={<PageNotFound />} />
-                    </Routes>
-                    <Footer />
-                </BrowserRouter>
+                <Authenticator>
+                    <BrowserRouter>
+                        <NavBar user={user} />
+                        <Routes >
+                            <Route path="/" element={<Home />} />
+                            <Route path="/tools">
+                                <Route path={KNOWN_TOOL_NAMES.RENTAL_CALCULATOR} element={<RentalCalculatorTool />}/>
+                                <Route path={KNOWN_TOOL_NAMES.RENT_ESTIMATOR} element={<RentEstimatorTool />}/>
+                                <Route path={KNOWN_TOOL_NAMES.BRRRR_CALCULATOR} element={<BRRRRCalculatorTool />}/>
+                                <Route index element={<Tools />} />
+                            </Route>
+                            <Route path="/contact-us" element={<ContactUs />} />
+                            <Route path="/login" element={<Login />} />
+                            <Route path="/signup" element={<SignUp />} />
+                            <Route path="/dashboard" element={
+                                <AuthenticatedPage props={authenticatedPageProps}>
+                                    <Dashboard />
+                                </AuthenticatedPage>
+                            } />
+                            <Route path="/preferences" element={
+                                <AuthenticatedPage props={authenticatedPageProps}>
+                                    <Preferences />
+                                </AuthenticatedPage>
+                            } />
+                            <Route path="*" element={<PageNotFound />} />
+                        </Routes>
+                        <Footer />
+                    </BrowserRouter>
+                </Authenticator>
             </ErrorBoundary>
         </React.StrictMode>
     );

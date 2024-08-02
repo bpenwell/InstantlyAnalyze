@@ -39,6 +39,9 @@ module.exports = {
     }),
   ],
   resolve: {
+    /*fallback: {
+      "stream": require.resolve("stream-browserify")
+    }*/
     extensions: ['.ts', '.tsx', '.js', '.jsx'],
     alias: {
         'react': path.resolve('./node_modules/react'),
