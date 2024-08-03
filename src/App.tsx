@@ -16,7 +16,7 @@ import { ContactUs,
     BRRRRCalculatorTool,
     ComprehensivePropertyAnalysis,
  } from '@bpenwell/rei-layouts';
-import { IUserData, KNOWN_TOOL_NAMES } from '@bpenwell/rei-module';
+import { IUserData, TOOL_IDS } from '@bpenwell/rei-module';
 
 export const App = () => {
     const [user, setUser] = useState<IUserData>();
@@ -34,10 +34,10 @@ export const App = () => {
                     <Routes >
                         <Route path="/" element={<Home />} />
                         <Route path="/tools">
-                            <Route path={KNOWN_TOOL_NAMES.RENTAL_CALCULATOR} element={<RentalCalculatorTool />}/>
-                            <Route path={KNOWN_TOOL_NAMES.RENT_ESTIMATOR} element={<RentEstimatorTool />}/>
-                            <Route path={KNOWN_TOOL_NAMES.BRRRR_CALCULATOR} element={<BRRRRCalculatorTool />}/>
-                            <Route path={KNOWN_TOOL_NAMES.COMPREHENSIVE_PROPERTY_ANALYSIS} element={<ComprehensivePropertyAnalysis />}/>
+                            <Route path={TOOL_IDS.RENTAL_CALCULATOR} element={<RentalCalculatorTool />}/>
+                            <Route path={TOOL_IDS.RENT_ESTIMATOR} element={<RentEstimatorTool />}/>
+                            <Route path={TOOL_IDS.BRRRR_CALCULATOR} element={<BRRRRCalculatorTool />}/>
+                            <Route path={TOOL_IDS.COMPREHENSIVE_PROPERTY_ANALYSIS} element={<ComprehensivePropertyAnalysis />}/>
                             <Route index element={<Tools />} />
                         </Route>
                         <Route path="/contact-us" element={<ContactUs />} />
