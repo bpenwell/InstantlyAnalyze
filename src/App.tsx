@@ -33,34 +33,36 @@ export const App = () => {
             <ErrorBoundary>
                 <BrowserRouter>
                     <NavBar user={user} />
-                    <Routes >
-                        <Route path='/' element={<Home />} />
-                        <Route path='/tools'>
-                            <Route path={TOOL_IDS.RENTAL_CALCULATOR}>
-                                <Route path='create' element={<RentalCalculatorCreation />}/>
-                                <Route path='view' element={<RentalCalculatorView />}/>
-                                <Route index element={<RentalCalculatorHome />} />
+                    <div className='fullPage'>
+                        <Routes >
+                            <Route path='/' element={<Home />} />
+                            <Route path='/tools'>
+                                <Route path={TOOL_IDS.RENTAL_CALCULATOR}>
+                                    <Route path='create' element={<RentalCalculatorCreation />}/>
+                                    <Route path='view' element={<RentalCalculatorView />}/>
+                                    <Route index element={<RentalCalculatorHome />} />
+                                </Route>
+                                <Route path={TOOL_IDS.RENT_ESTIMATOR} element={<RentEstimatorTool />}/>
+                                <Route path={TOOL_IDS.BRRRR_CALCULATOR} element={<BRRRRCalculatorTool />}/>
+                                <Route path={TOOL_IDS.COMPREHENSIVE_PROPERTY_ANALYSIS} element={<ComprehensivePropertyAnalysis />}/>
+                                <Route index element={<Tools />} />
                             </Route>
-                            <Route path={TOOL_IDS.RENT_ESTIMATOR} element={<RentEstimatorTool />}/>
-                            <Route path={TOOL_IDS.BRRRR_CALCULATOR} element={<BRRRRCalculatorTool />}/>
-                            <Route path={TOOL_IDS.COMPREHENSIVE_PROPERTY_ANALYSIS} element={<ComprehensivePropertyAnalysis />}/>
-                            <Route index element={<Tools />} />
-                        </Route>
-                        <Route path='/contact-us' element={<ContactUs />} />
-                        <Route path='/login' element={<Login />} />
-                        <Route path='/signup' element={<SignUp />} />
-                        <Route path='/dashboard' element={  
-                            <AuthenticatedPage props={authenticatedPageProps}>
-                                <Dashboard />
-                            </AuthenticatedPage>
-                        } />
-                        <Route path='/preferences' element={
-                            <AuthenticatedPage props={authenticatedPageProps}>
-                                <Preferences />
-                            </AuthenticatedPage>
-                        } />
-                        <Route path='*' element={<PageNotFound />} />
-                    </Routes>
+                            <Route path='/contact-us' element={<ContactUs />} />
+                            <Route path='/login' element={<Login />} />
+                            <Route path='/signup' element={<SignUp />} />
+                            <Route path='/dashboard' element={  
+                                <AuthenticatedPage props={authenticatedPageProps}>
+                                    <Dashboard />
+                                </AuthenticatedPage>
+                            } />
+                            <Route path='/preferences' element={
+                                <AuthenticatedPage props={authenticatedPageProps}>
+                                    <Preferences />
+                                </AuthenticatedPage>
+                            } />
+                            <Route path='*' element={<PageNotFound />} />
+                        </Routes>
+                    </div>
                     <Footer />
                 </BrowserRouter>
             </ErrorBoundary>

@@ -13,12 +13,12 @@
     "resolveJsonModule": true,
     "isolatedModules": true,
     "jsx": "react-jsx",
-    "noEmit": true,
+    "noEmit": false,  // Set to false to allow emitting files
     "declaration": true,
     "declarationDir": "dist",
-    "outDir": "dist",
-    "sourceMap": true,
+    "outDir": "dist",  // Ensure your compiled files are outputted here
+    "sourceMap": true
   },
-  "include": ["src"],
+  "include": ["src/"],
   "exclude": ["node_modules"]
 }
