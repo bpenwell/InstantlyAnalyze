@@ -1,7 +1,12 @@
 import React, { useState } from 'react';
 import './index.css';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
-import { Footer, AuthenticatedPage, IAuthenticatedPageProps, ErrorBoundary } from '@bpenwell/rei-components';
+import {
+    Footer,
+    AuthenticatedPage,
+    IAuthenticatedPageProps,
+    ErrorBoundary,
+} from '@bpenwell/rei-components';
 import { ContactUs,
     Tools,
     Home,
@@ -14,9 +19,11 @@ import { ContactUs,
     RentalCalculatorView,
     RentalCalculatorCreation,
     RentalCalculatorHome,
+    RentalCalculatorOutput,
     RentEstimatorTool,
     BRRRRCalculatorTool,
     ComprehensivePropertyAnalysis,
+    AIRealEstateAgent,
  } from '@bpenwell/rei-layouts';
 import { IUserData, TOOL_IDS } from '@bpenwell/rei-module';
 
@@ -40,11 +47,13 @@ export const App = () => {
                                 <Route path={TOOL_IDS.RENTAL_CALCULATOR}>
                                     <Route path='create' element={<RentalCalculatorCreation />}/>
                                     <Route path='view' element={<RentalCalculatorView />}/>
+                                    <Route path='view/:id' element={<RentalCalculatorOutput />}/> {/* Updated Route */}
                                     <Route index element={<RentalCalculatorHome />} />
                                 </Route>
                                 <Route path={TOOL_IDS.RENT_ESTIMATOR} element={<RentEstimatorTool />}/>
                                 <Route path={TOOL_IDS.BRRRR_CALCULATOR} element={<BRRRRCalculatorTool />}/>
                                 <Route path={TOOL_IDS.COMPREHENSIVE_PROPERTY_ANALYSIS} element={<ComprehensivePropertyAnalysis />}/>
+                                <Route path={TOOL_IDS.AI_REAL_ESTATE_AGENT} element={<AIRealEstateAgent />}/>
                                 <Route index element={<Tools />} />
                             </Route>
                             <Route path='/contact-us' element={<ContactUs />} />
