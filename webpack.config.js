@@ -50,5 +50,11 @@ module.exports = {
     static: path.resolve(__dirname, 'dist'),
     compress: true,
     port: 3000,
+    proxy: {
+      '/api/aiRealEstateAgentAPI': {
+        target: 'http://localhost:5000',
+        changeOrigin: true,
+      },
+    },
   },
 };
