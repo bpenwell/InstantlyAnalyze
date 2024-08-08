@@ -116,6 +116,8 @@ server_package "REI-Components" &
 server_package "REI-Layouts" &
 server_package "REI-Tool" &
 
-echo -e "${GREEN}Running start...${NC}"
-#Run the start command and handle errors
+# Wait for background processes to complete
+wait
+
+# Run the start command and handle errors
 eval "npm run start $output_redirect" || { echo -e "${RED}Error: Failed to run npm run start${NC}"; true; }

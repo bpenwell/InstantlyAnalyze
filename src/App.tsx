@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import './index.css';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import {
@@ -25,28 +25,15 @@ import { ContactUs,
     ComprehensivePropertyAnalysis,
     AIRealEstateAgent,
  } from '@bpenwell/rei-layouts';
-import { IUserData, TOOL_IDS, AuthenticationHandler, BackendAPI } from '@bpenwell/rei-module';
+import { IUserData, TOOL_IDS } from '@bpenwell/rei-module';
 
 export const App = () => {
     const [user, setUser] = useState<IUserData>();
+
     const authenticatedPageProps: IAuthenticatedPageProps = {
         user,
         setUser
     };
-    const authenticationHandler = new AuthenticationHandler();
-    authenticationHandler.handleAuthCode(setUser);
-
-    useEffect(() => {
-        async function fetchMyAPI() {
-            const backendAPI = new BackendAPI();
-            const response = await backendAPI.getAIRealEstateAgentAPI('test');
-            console.log(`Ben response`);
-            console.log(response);
-        }
-      
-        fetchMyAPI();
-    }, [user]);
-
 
     return (
         <React.StrictMode>
@@ -60,7 +47,7 @@ export const App = () => {
                                 <Route path={TOOL_IDS.RENTAL_CALCULATOR}>
                                     <Route path='create' element={<RentalCalculatorCreation />}/>
                                     <Route path='view' element={<RentalCalculatorView />}/>
-                                    <Route path='view/:id' element={<RentalCalculatorOutput />}/>
+                                    <Route path='view/:id' element={<RentalCalculatorOutput />}/> {/* Updated Route */}
                                     <Route index element={<RentalCalculatorHome />} />
                                 </Route>
                                 <Route path={TOOL_IDS.RENT_ESTIMATOR} element={<RentEstimatorTool />}/>
