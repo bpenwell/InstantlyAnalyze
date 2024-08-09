@@ -19,7 +19,7 @@ import { ContactUs,
     RentalCalculatorView,
     RentalCalculatorCreation,
     RentalCalculatorHome,
-    RentalCalculatorOutput,
+    RentalCalculator,
     RentEstimatorTool,
     BRRRRCalculatorTool,
     ComprehensivePropertyAnalysis,
@@ -47,7 +47,7 @@ export const App = () => {
                                 <Route path={TOOL_IDS.RENTAL_CALCULATOR}>
                                     <Route path='create' element={<RentalCalculatorCreation />}/>
                                     <Route path='view' element={<RentalCalculatorView />}/>
-                                    <Route path='view/:id' element={<RentalCalculatorOutput />}/> {/* Updated Route */}
+                                    <Route path='view/:id' element={<RentalCalculator />}/> {/* Updated Route */}
                                     <Route index element={<RentalCalculatorHome />} />
                                 </Route>
                                 <Route path={TOOL_IDS.RENT_ESTIMATOR} element={<RentEstimatorTool />}/>

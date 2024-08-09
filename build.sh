@@ -12,6 +12,27 @@ root_path="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 # Navigate to the root directory
 cd "$root_path" || exit
 
+# Function to kill existing processes
+kill_existing_processes() {
+  echo -e "${RED}Killing existing processes...${NC}"
+
+  # Kill processes related to npm run server
+  server_pids=$(ps aux | grep "npm run server" | grep -v grep | awk '{print $2}')
+  if [ -n "$server_pids" ]; then
+    echo "$server_pids" | xargs kill -9
+  fi
+
+  # Kill processes related to npm run start
+  start_pids=$(ps aux | grep "npm run start" | grep -v grep | awk '{print $2}')
+  if [ -n "$start_pids" ]; then
+    echo "$start_pids" | xargs kill -9
+  fi
+}
+
+
+# Call the function at the start of the script
+kill_existing_processes
+
 # Function to display help
 show_help() {
   echo -e "${GREEN}Usage: $0 [options]${NC}"
@@ -23,6 +44,16 @@ show_help() {
   echo "  --quiet       Suppress output messages"
   echo 
   exit 0
+}
+
+# Trap termination signals
+trap cleanup SIGINT SIGTERM
+
+# Function to kill background processes
+cleanup() {
+  echo -e "${RED}Cleaning up background processes...${NC}"
+  pkill -P $$  # Kill all child processes of this script
+  exit
 }
 
 # Parse parameters
@@ -65,10 +96,10 @@ build_package() {
         eval "npm run clean $output_redirect" || { echo -e "${RED}Error: Failed to clean $package_name${NC}"; exit 1; }
     fi
 
-    # Run clean if --clean parameter is provided
+    # Run prune if --prune parameter is provided
     if [ "$prune" = true ]; then
         echo -e "${GREEN}Running prune...${NC}"
-        eval "npm prune $output_redirect" || { echo -e "${RED}Error: Failed to clean $package_name${NC}"; exit 1; }
+        eval "npm prune $output_redirect" || { echo -e "${RED}Error: Failed to prune $package_name${NC}"; exit 1; }
     fi
 
     # Run install if --install parameter is provided
@@ -77,7 +108,7 @@ build_package() {
         eval "npm i $output_redirect" || { echo -e "${RED}Error: Failed to install $package_name${NC}"; exit 1; }
     fi
     
-    # Run install if --install parameter is provided
+    # Run audit fix if --auditFix parameter is provided
     if [ "$auditFix" = true ]; then
         echo -e "${GREEN}Running audit fix...${NC}"
         eval "npm audit fix $output_redirect" || { echo -e "${RED}Error: Failed to audit fix $package_name${NC}"; exit 1; }
