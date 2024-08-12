@@ -59,6 +59,7 @@ cleanup() {
 # Parse parameters
 install=false
 clean=false
+cleanNode=false
 quiet=false
 prune=false
 auditFix=false
@@ -68,6 +69,7 @@ while [[ "$#" -gt 0 ]]; do
     --help) show_help ;;
     --install) install=true ;;
     --clean) clean=true ;;
+    --cleanNode) cleanNode=true ;;
     --quiet) quiet=true ;;
     --prune) prune=true ;;
     --auditFix) auditFix=true ;;
@@ -94,6 +96,12 @@ build_package() {
     if [ "$clean" = true ]; then
         echo -e "${GREEN}Running clean...${NC}"
         eval "npm run clean $output_redirect" || { echo -e "${RED}Error: Failed to clean $package_name${NC}"; exit 1; }
+    fi
+
+    # Run cleanNode if --cleanNode parameter is provided
+    if [ "$cleanNode" = true ]; then
+        echo -e "${GREEN}Running clean node_modules...${NC}"
+        eval "npm run cleanNode $output_redirect" || { echo -e "${RED}Error: Failed to cleanNode $package_name${NC}"; exit 1; }
     fi
 
     # Run prune if --prune parameter is provided

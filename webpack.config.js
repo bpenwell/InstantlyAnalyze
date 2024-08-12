@@ -1,6 +1,7 @@
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 
 module.exports = {
   entry: './src/index.tsx',
@@ -15,6 +16,9 @@ module.exports = {
       {
         test: /\.(ts|tsx)$/,
         exclude: /node_modules/,
+        include: [
+          path.resolve(__dirname, 'src'),
+        ],
         use: {
           loader: 'ts-loader',
           options: {
@@ -23,8 +27,8 @@ module.exports = {
         },
       },
       {
-        test: /\.css$/,
-        use: ['style-loader', 'css-loader'],
+          test: /\.css$/i,
+          use: ['style-loader', 'css-loader'],
       },
     ],
   },
