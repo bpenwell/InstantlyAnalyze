@@ -41,8 +41,8 @@
     "postbuild:propertyDataAPI": "cd dist/lambdas && node zip.js propertyDataAPI/",
     "subPackageServer": "npm-run-all --parallel watch:*",
     "test": "react-scripts test",
-    "cleanRoot": "del /q package-lock.json && rd /s /q dist && rd /s /q node_modules",
-    "clean": "rm -rf dist package-lock.json"
+    "clean": "rm -rf dist package-lock.json",
+    "cleanNode": "rm -rf node_modules"
   },
   "eslintConfig": {
     "extends": [
