@@ -21,7 +21,7 @@ const archive = archiver('zip', {
 // Handle successful completion
 output.on('close', function() {
     console.log(archive.pointer() + ' total bytes');
-    console.log('Lambda function packaged successfully.');
+    console.debug('Lambda function packaged successfully.');
 });
 
 // Handle errors
@@ -33,7 +33,7 @@ archive.on('error', function(err) {
 archive.pipe(output);
 
 // Add the directory to the archive with proper folder structure
-console.log(`saving zip file to ${absoluteFolderPath}`);
+console.debug(`saving zip file to ${absoluteFolderPath}`);
 archive.directory(absoluteFolderPath, path.basename(absoluteFolderPath));
 
 // Finalize the archive

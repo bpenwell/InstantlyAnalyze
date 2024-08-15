@@ -14,7 +14,7 @@ const dynamo = DynamoDBDocument.from(new DynamoDB());*/
  * DynamoDB API as a JSON body.
  */
 export const handler = async (event: APIGatewayProxyEvent): Promise<APIGatewayProxyResult> => {
-    console.log('Received event:', JSON.stringify(event));
+    console.debug('Received event:', JSON.stringify(event));
 
     let body;
     let statusCode = 200;
