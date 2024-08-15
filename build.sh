@@ -58,6 +58,7 @@ cleanup() {
 
 # Parse parameters
 install=false
+buildLambda=false
 clean=false
 cleanNode=false
 quiet=false
@@ -67,6 +68,7 @@ auditFix=false
 while [[ "$#" -gt 0 ]]; do
   case $1 in
     --help) show_help ;;
+    --buildLambda) buildLambda=true ;;
     --install) install=true ;;
     --clean) clean=true ;;
     --cleanNode) cleanNode=true ;;
@@ -78,6 +80,23 @@ while [[ "$#" -gt 0 ]]; do
   shift
 done
 
+# Function to build a package
+build_lambda() {
+    local package_name=$1
+    echo -e "${MAGENTA}[Build][$package_name]${NC}"
+    cd "../$package_name" || exit
+
+    # Determine if output should be hidden
+    local output_redirect
+    if [ "$quiet" = true ]; then
+        output_redirect="> /dev/null 2>&1"
+    else
+        output_redirect=""
+    fi
+    
+    echo -e "${GREEN}Running build...${NC}"
+    eval "npm run buildLambda $output_redirect" || { echo -e "${RED}Error: Failed to build $package_name${NC}"; exit 1; }
+}
 # Function to build a package
 build_package() {
     local package_name=$1
@@ -148,6 +167,10 @@ build_package "REI-Module"
 build_package "REI-Components"
 build_package "REI-Layouts"
 build_package "REI-Tool"
+
+if [ "$buildLambda" = true ]; then
+    build_lambda "REI-Tool"
+fi
 
 echo -e "${GREEN}Running server...${NC}"
 server_package "REI-Module" & 
