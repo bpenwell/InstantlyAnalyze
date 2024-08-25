@@ -2,6 +2,8 @@ const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const { GenerateSW } = require('workbox-webpack-plugin');
+const WebpackPwaManifest = require('webpack-pwa-manifest');
 
 module.exports = {
   entry: './src/index.tsx',
@@ -40,7 +42,14 @@ module.exports = {
     new CopyWebpackPlugin({
       patterns: [
         { from: 'public', to: 'public' }, // copy the entire 'public' folder
+        { from: 'public/manifest.json', to: 'manifest.json' }, // copy the manifest file
       ],
+    }),
+    new MiniCssExtractPlugin(),
+    new WebpackPwaManifest(),
+    new GenerateSW({
+      clientsClaim: true,
+      skipWaiting: true,
     }),
   ],
   resolve: {
