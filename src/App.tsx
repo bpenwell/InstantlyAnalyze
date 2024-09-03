@@ -43,7 +43,7 @@ export const App = () => {
                     <div className='fullPage'>
                         <Routes >
                             <Route path='/' element={<Home />} />
-                            <Route path='/tools'>
+                            <Route path='/product'>
                                 <Route path={TOOL_IDS.RENTAL_CALCULATOR}>
                                     <Route path='create' element={<RentalCalculatorCreation />}/>
                                     <Route path='view' element={<RentalCalculatorView />}/>
