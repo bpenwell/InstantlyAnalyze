@@ -9,12 +9,17 @@
   "icons": [
     {
       "src": "./logo192.png",
-      "sizes": "192x192",
+      "sizes": "192x170",
+      "type": "image/png"
+    },
+    {
+      "src": "./logo69.png",
+      "sizes": "69X60",
       "type": "image/png"
     },
     {
       "src": "./logo512.png",
-      "sizes": "512x512",
+      "sizes": "512x453",
       "type": "image/png"
     }
   ],
@@ -29,6 +34,21 @@
       "sizes": "1344x768",
       "type": "image/png",
       "form_factor": "wide"
+    },
+    {
+      "src": "./logo_ai.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    },
+    {
+      "src": "./logo_rentalCalculator.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    },
+    {
+      "src": "./rentalPropertyCalculator.png",
+      "sizes": "1920x1080",
+      "type": "image/png"
     }
-]
+  ]
 }

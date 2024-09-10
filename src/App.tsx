@@ -8,7 +8,7 @@ import {
     ErrorBoundary,
 } from '@bpenwell/rei-components';
 import { ContactUs,
-    Tools,
+    Products,
     Home,
     NavBar,
     PageNotFound,
@@ -54,7 +54,7 @@ export const App = () => {
                                 <Route path={TOOL_IDS.BRRRR_CALCULATOR} element={<BRRRRCalculatorTool />}/>
                                 <Route path={TOOL_IDS.COMPREHENSIVE_PROPERTY_ANALYSIS} element={<ComprehensivePropertyAnalysis />}/>
                                 <Route path={TOOL_IDS.AI_REAL_ESTATE_AGENT} element={<AIRealEstateAgent />}/>
-                                <Route index element={<Tools />} />
+                                <Route index element={<Products />} />
                             </Route>
                             <Route path='/contact-us' element={<ContactUs />} />
                             <Route path='/login' element={<Login />} />
