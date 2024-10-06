@@ -79,24 +79,24 @@ const updateApiUsageCount = async (incrementBy, maxApiCallsPerMonth) => {
 };
 
 // Define CORS headers
-/*const CORS_HEADERS = {
+const CORS_HEADERS = {
   'Access-Control-Allow-Origin': '*', // Update this to your frontend's origin
   'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
   'Access-Control-Allow-Headers': 'Content-Type, Authorization',
   // 'Access-Control-Allow-Credentials': 'true', // Uncomment if you need to allow credentials
-};*/
+};
 export const handler = async (event) => {
   let body;
   let statusCode = 200;
   
   // Initialize headers with CORS headers and Content-Type
   const headers = {
-    //...CORS_HEADERS,
+    ...CORS_HEADERS,
     'Content-Type': 'application/json',
   };
 
   try {
-    /*const method = event.httpMethod;
+    const method = event.requestContext.http.method;
     console.log(`event=${method}`);
     console.log(`method=${method}`);
 
@@ -109,7 +109,7 @@ export const handler = async (event) => {
         headers: CORS_HEADERS,
         body: '', // No content needed for OPTIONS response
       };
-    }*/
+    }
 
     // Handle CloudWatch scheduled reset event
     if (event.action === 'resetUsageCount') {
