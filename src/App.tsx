@@ -18,6 +18,7 @@ import { ContactUs,
     Preferences,
     RentalCalculatorView,
     RentalCalculatorCreation,
+    RentalCalculatorCreationV2,
     RentalCalculatorHome,
     RentalCalculator,
     RentEstimatorTool,
@@ -45,7 +46,7 @@ export const App = () => {
                             <Route path='/' element={<Home />} />
                             <Route path='/product'>
                                 <Route path={TOOL_IDS.RENTAL_CALCULATOR}>
-                                    <Route path='create' element={<RentalCalculatorCreation />}/>
+                                    <Route path='create' element={<RentalCalculatorCreationV2 />}/>
                                     <Route path='view' element={<RentalCalculatorView />}/>
                                     <Route path='view/:id' element={<RentalCalculator />}/> {/* Updated Route */}
                                     <Route index element={<RentalCalculatorHome />} />

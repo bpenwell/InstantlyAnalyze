@@ -29,7 +29,6 @@ kill_existing_processes() {
   fi
 }
 
-
 # Call the function at the start of the script
 kill_existing_processes
 
@@ -38,10 +37,16 @@ show_help() {
   echo -e "${GREEN}Usage: $0 [options]${NC}"
   echo
   echo "Options:"
-  echo "  --help        Show this help message and exit"
-  echo "  --install     Install dependencies before building"
-  echo "  --clean       Clean the build directory before building"
-  echo "  --quiet       Suppress output messages"
+  echo "  --help             Show this help message and exit"
+  echo "  --install          Install dependencies before building"
+  echo "  --clean            Clean the build directory before building"
+  echo "  --cleanNode        Clean node_modules before building"
+  echo "  --prune            Prune npm dependencies before building"
+  echo "  --auditFix         Run npm audit fix before building"
+  echo "  --quiet            Suppress output messages"
+  echo "  --buildLambda      Build Lambda functions in addition to building packages"
+  echo "  --buildLambdaOnly  Build only the Lambda functions and skip other build steps"
+  echo "  --server           Skip building and directly start the servers"
   echo 
   exit 0
 }
@@ -59,6 +64,8 @@ cleanup() {
 # Parse parameters
 install=false
 buildLambda=false
+buildLambdaOnly=false
+server_mode=false
 clean=false
 cleanNode=false
 quiet=false
@@ -69,21 +76,39 @@ while [[ "$#" -gt 0 ]]; do
   case $1 in
     --help) show_help ;;
     --buildLambda) buildLambda=true ;;
+    --buildLambdaOnly) buildLambdaOnly=true ;;
+    --server) server_mode=true ;;
     --install) install=true ;;
     --clean) clean=true ;;
     --cleanNode) cleanNode=true ;;
     --quiet) quiet=true ;;
     --prune) prune=true ;;
     --auditFix) auditFix=true ;;
-    *) usage ;;
+    *) 
+      echo -e "${RED}Unknown option: $1${NC}"
+      show_help
+      ;;
   esac
   shift
 done
 
-# Function to build a package
+# Validate exclusive options
+if [ "$buildLambdaOnly" = true ] && [ "$server_mode" = true ]; then
+  echo -e "${RED}Error: --buildLambdaOnly and --server options cannot be used together.${NC}"
+  exit 1
+fi
+
+if [ "$server_mode" = true ]; then
+  if [ "$install" = true ] || [ "$clean" = true ] || [ "$cleanNode" = true ] || [ "$prune" = true ] || [ "$auditFix" = true ] || [ "$buildLambda" = true ]; then
+    echo -e "${RED}Error: When using --server, build-related options cannot be used.${NC}"
+    exit 1
+  fi
+fi
+
+# Function to build a Lambda
 build_lambda() {
     local package_name=$1
-    echo -e "${MAGENTA}[Build][$package_name]${NC}"
+    echo -e "${MAGENTA}[Build Lambdas][$package_name]${NC}"
     cd "../$package_name" || exit
 
     # Determine if output should be hidden
@@ -93,10 +118,11 @@ build_lambda() {
     else
         output_redirect=""
     fi
-    
-    echo -e "${GREEN}Running build...${NC}"
+
+    echo -e "${GREEN}Running buildLambda...${NC}"
     eval "npm run buildLambda $output_redirect" || { echo -e "${RED}Error: Failed to build $package_name${NC}"; exit 1; }
 }
+
 # Function to build a package
 build_package() {
     local package_name=$1
@@ -132,7 +158,7 @@ build_package() {
     # Run install if --install parameter is provided
     if [ "$install" = true ]; then
         echo -e "${GREEN}Running install...${NC}"
-        eval "npm i $output_redirect" || { echo -e "${RED}Error: Failed to install $package_name${NC}"; exit 1; }
+        eval "npm install $output_redirect" || { echo -e "${RED}Error: Failed to install $package_name${NC}"; exit 1; }
     fi
     
     # Run audit fix if --auditFix parameter is provided
@@ -162,24 +188,66 @@ server_package() {
     eval "npm run server $output_redirect" &
 }
 
-# Build each subpackage
-build_package "REI-Module"
-build_package "REI-Components"
-build_package "REI-Layouts"
-build_package "REI-Tool"
+# Function to build all packages
+build_all_packages() {
+    build_package "REI-Module"
+    build_package "REI-Components"
+    build_package "REI-Layouts"
+    build_package "REI-Tool"
+}
 
-if [ "$buildLambda" = true ]; then
+# Function to start all servers
+start_all_servers() {
+    echo -e "${GREEN}Starting servers...${NC}"
+    server_package "REI-Module" & 
+    server_package "REI-Components" & 
+    server_package "REI-Layouts" &
+    server_package "REI-Tool" &
+}
+
+# Main execution logic based on options
+if [ "$server_mode" = true ]; then
+    # Server Mode: Skip building and start servers directly
+    start_all_servers
+
+    # Determine if output should be hidden for start command
+    if [ "$quiet" = true ]; then
+        output_redirect="> /dev/null 2>&1"
+    else
+        output_redirect=""
+    fi
+
+    # Run the start command and handle errors
+    echo -e "${GREEN}Running npm run start...${NC}"
+    eval "npm run start $output_redirect" || { echo -e "${RED}Error: Failed to run npm run start${NC}"; true; }
+
+elif [ "$buildLambdaOnly" = true ]; then
+    # Build Lambda Only Mode: Build only the Lambda functions
     build_lambda "REI-Tool"
+
+else
+    # Default Mode: Build all packages
+    build_all_packages
+
+    # If buildLambda flag is set, build Lambda functions in addition
+    if [ "$buildLambda" = true ]; then
+        build_lambda "REI-Tool"
+    fi
+
+    # Start all servers
+    start_all_servers
+
+    # Wait for background processes to complete
+    wait
+
+    # Determine if output should be hidden for start command
+    if [ "$quiet" = true ]; then
+        output_redirect="> /dev/null 2>&1"
+    else
+        output_redirect=""
+    fi
+
+    # Run the start command and handle errors
+    echo -e "${GREEN}Running npm run start...${NC}"
+    eval "npm run start $output_redirect" || { echo -e "${RED}Error: Failed to run npm run start${NC}"; true; }
 fi
-
-echo -e "${GREEN}Running server...${NC}"
-server_package "REI-Module" & 
-server_package "REI-Components" & 
-server_package "REI-Layouts" &
-server_package "REI-Tool" &
-
-# Wait for background processes to complete
-wait
-
-# Run the start command and handle errors
-eval "npm run start $output_redirect" || { echo -e "${RED}Error: Failed to run npm run start${NC}"; true; }
