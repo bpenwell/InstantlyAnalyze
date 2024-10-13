@@ -1,3 +1,6 @@
+// Polyfills must be imported before any other code
+import '@webcomponents/webcomponentsjs/webcomponents-bundle.js';
+import 'construct-style-sheets-polyfill';
 import React, { useState } from 'react';
 import './index.css';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
@@ -46,7 +49,8 @@ export const App = () => {
                             <Route path='/' element={<Home />} />
                             <Route path='/product'>
                                 <Route path={TOOL_IDS.RENTAL_CALCULATOR}>
-                                    <Route path='create' element={<RentalCalculatorCreationV2 />}/>
+                                    <Route path='create' element={<RentalCalculatorCreation />}/>
+                                    <Route path='createv2' element={<RentalCalculatorCreationV2 />}/>
                                     <Route path='view' element={<RentalCalculatorView />}/>
                                     <Route path='view/:id' element={<RentalCalculator />}/> {/* Updated Route */}
                                     <Route index element={<RentalCalculatorHome />} />
