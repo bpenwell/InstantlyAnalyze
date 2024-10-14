@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Instantly Analyze™ Zillow Tool Scraper</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="sidebar">
+    <a href="home.html" class="menu-item active">
+      <img src="../icons/home.png" alt="Home Logo" />
+    </a>
+    <a href="faq.html" class="menu-item">
+      <img src="../icons/faq.png" alt="FAQ Logo" />
+    </a>
+    <a href="settings.html" class="menu-item">
+      <img src="../icons/settings.png" alt="Settings Logo" />
+    </a>
+    <a href="pro.html" class="menu-item">
+      <img src="../icons/pro.png" alt="Pro Logo" />
+    </a>
+  </div>
+
+  <div class="content-wrapper">
+    <div id="pin-container" style="position: relative; width: 100%;">
+      <div id="pin-reminder" class="pin-reminder" style="display: none;">
+        <span>Pin this extension for quick access!</span>
+        <button id="dismiss-reminder">✕</button>
+      </div>
+    </div>
+    
+    <div class="title-container">
+      <h2 class="header-title">Instantly Analyze™ Zillow Tool Scraper</h2>
+    </div>
+    
+    <div class="main-content" style="display: flex; flex-direction: column; height: 100vh; width: 100vh;">
+      
+
+      <!-- Home HTML loaded by default -->
+      <div id="content-area" style="flex: 2;">
+      </div>
+
+      <footer style="text-align: center; padding: 10px;">@2024 REI Tools</footer>
+    </div>
+  </div>
+
+  <script src="popup.js"></script>
+</body>
+</html>

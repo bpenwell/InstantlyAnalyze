@@ -1,7 +1,7 @@
 {
-  "name": "Real Estate Analysis",
-  "short_name": "REA",
-  "description": "Your one stop shop for analyzing real estate deals",
+  "name": "InstantlyAnalyze.com",
+  "short_name": "IA.com",
+  "description": "Analyze an insane amount of deals in seconds",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#ffffff",

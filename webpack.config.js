@@ -48,6 +48,7 @@ module.exports = {
     new MiniCssExtractPlugin(),
     new WebpackPwaManifest(),
     new GenerateSW({
+      maximumFileSizeToCacheInBytes: 10 * 1024 * 1024, // 10 MB
       clientsClaim: true,
       skipWaiting: true,
     }),
