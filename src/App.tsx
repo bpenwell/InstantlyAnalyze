@@ -25,7 +25,7 @@ import { ContactUs,
     ComprehensivePropertyAnalysis,
     AIRealEstateAgent,
  } from '@bpenwell/rei-layouts';
-import { TOOL_IDS } from '@bpenwell/rei-module';
+import { auth0Props, TOOL_IDS } from '@bpenwell/rei-module';
 import { Auth0Provider } from '@auth0/auth0-react';
 
 export const App = () => {
@@ -33,16 +33,10 @@ export const App = () => {
         <React.StrictMode>
             <ErrorBoundary>
                     <BrowserRouter>
-                        <Auth0Provider
-                            domain="dev-p8nd2avp7tf7tr1b.us.auth0.com"//"auth.instantlyanalyze.com"
-                            clientId="dev-p8nd2avp7tf7tr1b"
-                            authorizationParams={{
-                            redirect_uri: window.location.origin
-                            }}
-                        >
+                        <Auth0Provider {...auth0Props}>
                         <NavBar />
                         <div className='fullPage'>
-                            <Routes >
+                            <Routes>
                                 <Route path='/' element={<Home />} />
                                 <Route path='/product'>
                                     <Route path={TOOL_IDS.RENTAL_CALCULATOR}>
