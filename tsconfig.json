@@ -19,6 +19,6 @@
     "outDir": "dist",  // Ensure your compiled files are outputted here
     "sourceMap": true
   },
-  "include": ["src/", "../REI-Layouts/src/layouts/AppV2.tsx"],
+  "include": ["src/"],
   "exclude": ["node_modules"]
 }

@@ -59,6 +59,7 @@ module.exports = {
       'react': path.resolve(__dirname, 'node_modules/react'),
       'react-dom': path.resolve(__dirname, 'node_modules/react-dom'),
       'react-router-dom': path.resolve(__dirname, 'node_modules/react-router-dom'),
+      '@auth0/auth0-react': path.resolve(__dirname, 'node_modules/@auth0/auth0-react'),
     }
   },
   devServer: {
