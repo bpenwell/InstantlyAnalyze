@@ -5,16 +5,14 @@ import {
     Footer,
     AuthenticatedPage,
     ErrorBoundary,
+    AppLayoutPreview,
 } from '@bpenwell/rei-components';
 import { ContactUs,
     Products,
     Home,
     NavBar,
     PageNotFound,
-    Login,
-    SignUp,
     Dashboard,
-    Preferences,
     RentalCalculatorView,
     RentalCalculatorCreation,
     RentalCalculatorCreationV2,
@@ -26,7 +24,6 @@ import { ContactUs,
     AIRealEstateAgent,
  } from '@bpenwell/rei-layouts';
 import { TOOL_IDS } from '@bpenwell/rei-module';
-import { AppV2 } from '@bpenwell/rei-layouts';
 
 export const App = () => {
     return (
@@ -35,14 +32,29 @@ export const App = () => {
                 <NavBar />
                 <div className='fullPage'>
                     <Routes>
-                        <Route path='/test-auth' element={<AppV2 />} />
-                        <Route path='/' element={<Home />} />
+                        <Route path='/' element={<AppLayoutPreview />} />
                         <Route path='/product'>
                             <Route path={TOOL_IDS.RENTAL_CALCULATOR}>
-                                <Route path='create' element={<RentalCalculatorCreation />}/>
-                                <Route path='createv2' element={<RentalCalculatorCreationV2 />}/>
-                                <Route path='view' element={<RentalCalculatorView />}/>
-                                <Route path='view/:id' element={<RentalCalculator />}/> {/* Updated Route */}
+                                <Route path='create' element={
+                                    <AuthenticatedPage>
+                                        <RentalCalculatorCreation />
+                                    </AuthenticatedPage>
+                                }/>
+                                <Route path='createv2' element={
+                                    <AuthenticatedPage>
+                                        <RentalCalculatorCreationV2 />
+                                    </AuthenticatedPage>
+                                }/>
+                                <Route path='view' element={
+                                    <AuthenticatedPage>
+                                        <RentalCalculatorView />
+                                    </AuthenticatedPage>
+                                }/>
+                                <Route path='view/:id' element={
+                                    <AuthenticatedPage>
+                                        <RentalCalculator />
+                                    </AuthenticatedPage>
+                                }/>
                                 <Route index element={<RentalCalculatorHome />} />
                             </Route>
                             <Route path={TOOL_IDS.RENT_ESTIMATOR} element={<RentEstimatorTool />}/>
@@ -52,16 +64,9 @@ export const App = () => {
                             <Route index element={<Products />} />
                         </Route>
                         <Route path='/contact-us' element={<ContactUs />} />
-                        <Route path='/login' element={<Login />} />
-                        <Route path='/signup' element={<SignUp />} />
                         <Route path='/dashboard' element={  
                             <AuthenticatedPage>
                                 <Dashboard />
-                            </AuthenticatedPage>
-                        } />
-                        <Route path='/preferences' element={
-                            <AuthenticatedPage>
-                                <Preferences />
                             </AuthenticatedPage>
                         } />
                         <Route path='*' element={<PageNotFound />} />

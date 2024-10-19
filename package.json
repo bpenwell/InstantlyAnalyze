@@ -9,6 +9,10 @@
     "@bpenwell/rei-components": "file:../REI-Components",
     "@bpenwell/rei-layouts": "file:../REI-Layouts",
     "@bpenwell/rei-module": "file:../REI-Module",
+    "@cloudscape-design/board-components": "^3.0.81",
+    "@cloudscape-design/components": "^3.0.793",
+    "@cloudscape-design/components-themeable": "^3.0.805",
+    "@cloudscape-design/global-styles": "^1.0.32",
     "@types/jest": "^29.5.11",
     "@types/node": "^20.11.6",
     "@types/react": "^18.2.48",
@@ -50,7 +54,8 @@
     "subPackageServer": "npm-run-all --parallel watch:*",
     "test": "react-scripts test",
     "clean": "rm -rf dist package-lock.json",
-    "cleanNode": "rm -rf node_modules"
+    "cleanNode": "rm -rf node_modules",
+    "build:theme": "npx cloudscape build --input custom-tokens.json --output src/custom-theme.css"
   },
   "eslintConfig": {
     "extends": [

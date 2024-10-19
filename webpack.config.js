@@ -30,9 +30,9 @@ module.exports = {
         },
       },
       {
-          test: /\.css$/i,
-          use: ['style-loader', 'css-loader'],
-      },
+        test: /\.css$/i,
+        use: ['style-loader', 'css-loader'],
+      }
     ],
   },
   plugins: [
@@ -60,6 +60,9 @@ module.exports = {
       'react-dom': path.resolve(__dirname, 'node_modules/react-dom'),
       'react-router-dom': path.resolve(__dirname, 'node_modules/react-router-dom'),
       '@auth0/auth0-react': path.resolve(__dirname, 'node_modules/@auth0/auth0-react'),
+      '@cloudscape-design/components': path.resolve(__dirname, 'node_modules/@cloudscape-design/components'),
+      '@cloudscape-design/design-tokens': path.resolve(__dirname, 'node_modules/@cloudscape-design/design-tokens'),
+      '@cloudscape-design/board-components': path.resolve(__dirname, 'node_modules/@cloudscape-design/board-components'),
     }
   },
   devServer: {

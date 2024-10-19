@@ -1,11 +1,15 @@
 import './index.css';
-import React, { useMemo } from 'react';
 import reportWebVitals from './reportWebVitals';
 import { App } from './App';
 import { createRoot } from 'react-dom/client';
-import { AppV2 } from '@bpenwell/rei-layouts';
 import { auth0Props } from '@bpenwell/rei-module';
 import { Auth0Provider } from '@auth0/auth0-react';
+import '@cloudscape-design/global-styles/index.css'; // Correct import path
+import { applyMode, applyDensity, Density, Mode } from '@cloudscape-design/global-styles';
+
+// apply global css settings
+applyMode(Mode.Dark);
+applyDensity(Density.Comfortable);
 
 const container = document.getElementById('root');
 const root = createRoot(container!);
