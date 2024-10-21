@@ -22,6 +22,8 @@ import { ContactUs,
     BRRRRCalculatorTool,
     ComprehensivePropertyAnalysis,
     AIRealEstateAgent,
+    RentalCalculatorViewV2,
+    ZillowScraperLandingPage
  } from '@bpenwell/rei-layouts';
 import { TOOL_IDS } from '@bpenwell/rei-module';
 
@@ -47,7 +49,7 @@ export const App = () => {
                                 }/>
                                 <Route path='view' element={
                                     <AuthenticatedPage>
-                                        <RentalCalculatorView />
+                                        <RentalCalculatorViewV2 />
                                     </AuthenticatedPage>
                                 }/>
                                 <Route path='view/:id' element={
@@ -58,6 +60,7 @@ export const App = () => {
                                 <Route index element={<RentalCalculatorHome />} />
                             </Route>
                             <Route path={TOOL_IDS.RENT_ESTIMATOR} element={<RentEstimatorTool />}/>
+                            <Route path={TOOL_IDS.ZILLOW_SCRAPER} element={<ZillowScraperLandingPage />}/>
                             <Route path={TOOL_IDS.BRRRR_CALCULATOR} element={<BRRRRCalculatorTool />}/>
                             <Route path={TOOL_IDS.COMPREHENSIVE_PROPERTY_ANALYSIS} element={<ComprehensivePropertyAnalysis />}/>
                             <Route path={TOOL_IDS.AI_REAL_ESTATE_AGENT} element={<AIRealEstateAgent />}/>

@@ -8,7 +8,7 @@ import '@cloudscape-design/global-styles/index.css'; // Correct import path
 import { applyMode, applyDensity, Density, Mode } from '@cloudscape-design/global-styles';
 
 // apply global css settings
-applyMode(Mode.Dark);
+applyMode(Mode.Light);
 applyDensity(Density.Comfortable);
 
 const container = document.getElementById('root');

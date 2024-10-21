@@ -1,5 +1,28 @@
+/* Define global color variables
+:root {
+  --primary-button-color: #6200ee;
+  --secondary-button-color: #1e1e1e;
+  --header-background-color: #1e1e1e;
+  --primary-background-color: #121212;
+  --primary-text-color: #e0e0e0;
+}
+
+button.primary {
+  background-color: var(--primary-button-color) !important;
+  color: var(--primary-text-color) !important;
+}
+
+button.secondary {
+  background-color: var(--secondary-button-color) !important;
+  color: var(--primary-text-color) !important;
+}
+
+h1,h2,h3,h4,h5,h6 {
+  color: var(--primary-text-color);
+}*/
+
 body {
-  background-color: #000000; /* Dark gray/black background */
+  background-color: var(--primary-background-color); /* Dark gray/black background */
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
     'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
     sans-serif;

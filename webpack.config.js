@@ -63,6 +63,10 @@ module.exports = {
       '@cloudscape-design/components': path.resolve(__dirname, 'node_modules/@cloudscape-design/components'),
       '@cloudscape-design/design-tokens': path.resolve(__dirname, 'node_modules/@cloudscape-design/design-tokens'),
       '@cloudscape-design/board-components': path.resolve(__dirname, 'node_modules/@cloudscape-design/board-components'),
+      '@mui/material': path.resolve(__dirname, 'node_modules/@mui/material'),
+      '@mui/icons-material': path.resolve(__dirname, 'node_modules/@mui/icons-material'),
+      '@emotion/react': path.resolve(__dirname, 'node_modules/@emotion/react'),
+      '@emotion/styled': path.resolve(__dirname, 'node_modules/@emotion/styled'),
     }
   },
   devServer: {
