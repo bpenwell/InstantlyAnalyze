@@ -64,6 +64,7 @@ module.exports = {
       'react-dom': path.resolve(__dirname, 'node_modules/react-dom'),
       'react-router-dom': path.resolve(__dirname, 'node_modules/react-router-dom'),
       '@auth0/auth0-react': path.resolve(__dirname, 'node_modules/@auth0/auth0-react'),
+      '@mapbox/search-js-react': path.resolve(__dirname, 'node_modules/@mapbox/search-js-react'),
       '@cloudscape-design/components': path.resolve(__dirname, 'node_modules/@cloudscape-design/components'),
       '@cloudscape-design/chat-components': path.resolve(__dirname, 'node_modules/@cloudscape-design/chat-components'),
       '@cloudscape-design/design-tokens': path.resolve(__dirname, 'node_modules/@cloudscape-design/design-tokens'),
