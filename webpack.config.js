@@ -56,12 +56,18 @@ module.exports = {
   resolve: {
     extensions: ['.ts', '.tsx', '.js', '.jsx'],
     alias: {
+      '@bpenwell/rei-module': path.resolve(__dirname, 'node_modules/@bpenwell/rei-module'),
+      '@bpenwell/rei-components': path.resolve(__dirname, 'node_modules/@bpenwell/rei-components'),
+      '@bpenwell/rei-layouts': path.resolve(__dirname, 'node_modules/@bpenwell/rei-layouts'),
+      'react': path.resolve(__dirname, 'node_modules/react'),
       'react': path.resolve(__dirname, 'node_modules/react'),
       'react-dom': path.resolve(__dirname, 'node_modules/react-dom'),
       'react-router-dom': path.resolve(__dirname, 'node_modules/react-router-dom'),
       '@auth0/auth0-react': path.resolve(__dirname, 'node_modules/@auth0/auth0-react'),
       '@cloudscape-design/components': path.resolve(__dirname, 'node_modules/@cloudscape-design/components'),
+      '@cloudscape-design/chat-components': path.resolve(__dirname, 'node_modules/@cloudscape-design/chat-components'),
       '@cloudscape-design/design-tokens': path.resolve(__dirname, 'node_modules/@cloudscape-design/design-tokens'),
+      '@cloudscape-design/collection-hooks': path.resolve(__dirname, 'node_modules/@cloudscape-design/collection-hooks'),
       '@cloudscape-design/board-components': path.resolve(__dirname, 'node_modules/@cloudscape-design/board-components'),
       '@mui/material': path.resolve(__dirname, 'node_modules/@mui/material'),
       '@mui/icons-material': path.resolve(__dirname, 'node_modules/@mui/icons-material'),
