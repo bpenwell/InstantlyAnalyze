@@ -5,11 +5,6 @@ import { createRoot } from 'react-dom/client';
 import { auth0Props } from '@bpenwell/rei-module';
 import { Auth0Provider } from '@auth0/auth0-react';
 import '@cloudscape-design/global-styles/index.css'; // Correct import path
-import { applyMode, applyDensity, Density, Mode } from '@cloudscape-design/global-styles';
-
-// apply global css settings
-applyMode(Mode.Light);
-applyDensity(Density.Comfortable);
 
 const container = document.getElementById('root');
 const root = createRoot(container!);

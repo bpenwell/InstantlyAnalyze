@@ -69,6 +69,7 @@ module.exports = {
       '@cloudscape-design/design-tokens': path.resolve(__dirname, 'node_modules/@cloudscape-design/design-tokens'),
       '@cloudscape-design/collection-hooks': path.resolve(__dirname, 'node_modules/@cloudscape-design/collection-hooks'),
       '@cloudscape-design/board-components': path.resolve(__dirname, 'node_modules/@cloudscape-design/board-components'),
+      '@cloudscape-design/global-styles': path.resolve(__dirname, 'node_modules/@cloudscape-design/global-styles'),
       '@mui/material': path.resolve(__dirname, 'node_modules/@mui/material'),
       '@mui/icons-material': path.resolve(__dirname, 'node_modules/@mui/icons-material'),
       '@emotion/react': path.resolve(__dirname, 'node_modules/@emotion/react'),

@@ -26,9 +26,17 @@ import { ContactUs,
     RentalCalculatorViewV3,
     ZillowScraperLandingPage,
 } from '@bpenwell/rei-layouts';
-import { TOOL_IDS } from '@bpenwell/rei-module';
+import { LOCAL_STORAGE_KEYS, TOOL_IDS, useLocalStorage } from '@bpenwell/rei-module';
+import { applyMode, applyDensity, Density, Mode } from '@cloudscape-design/global-styles';
 
 export const App = () => {
+
+    // apply global css settings
+    const [appMode] = useLocalStorage<Mode>(LOCAL_STORAGE_KEYS.APP_MODE);
+    const [appDensity] = useLocalStorage<Density>(LOCAL_STORAGE_KEYS.APP_DENSITY);
+    applyMode(appMode);
+    applyDensity(appDensity);
+
     useEffect(() => {
         if (!window.location.hash.includes('#/')) {
             window.location.hash = `#/${window.location.hash}`
