@@ -66,6 +66,13 @@ export const App = () => {
                                         </AuthenticatedPage>
                                     )
                                 }/>
+                                <Route path='edit/:id' element={
+                                    wrapPageInLayout(
+                                        <AuthenticatedPage>
+                                            <RentalCalculatorCreation isEditPage={true} />
+                                        </AuthenticatedPage>
+                                    )
+                                }/>
                                 <Route path='createv2' element={
                                     wrapPageInLayout(
                                         <AuthenticatedPage>
