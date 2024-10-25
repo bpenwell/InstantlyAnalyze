@@ -16,6 +16,7 @@ import { ContactUs,
     RentalCalculatorView,
     RentalCalculatorCreation,
     RentalCalculatorCreationV2,
+    RentalCalculatorCreationV3,
     RentalCalculatorHome,
     RentalCalculator,
     RentEstimatorTool,
@@ -77,6 +78,13 @@ export const App = () => {
                                     wrapPageInLayout(
                                         <AuthenticatedPage>
                                             <RentalCalculatorCreationV2 />
+                                        </AuthenticatedPage>
+                                    )
+                                }/>
+                                <Route path='createv3' element={
+                                    wrapPageInLayout(
+                                        <AuthenticatedPage>
+                                            <RentalCalculatorCreationV3 />
                                         </AuthenticatedPage>
                                     )
                                 }/>
