@@ -16,6 +16,7 @@ import { ContactUs,
     RentalCalculatorView,
     RentalCalculatorCreation,
     RentalCalculatorCreationV2,
+    RentalCalculatorCreationV3,
     RentalCalculatorHome,
     RentalCalculator,
     RentEstimatorTool,
@@ -66,10 +67,24 @@ export const App = () => {
                                         </AuthenticatedPage>
                                     )
                                 }/>
+                                <Route path='edit/:id' element={
+                                    wrapPageInLayout(
+                                        <AuthenticatedPage>
+                                            <RentalCalculatorCreation isEditPage={true} />
+                                        </AuthenticatedPage>
+                                    )
+                                }/>
                                 <Route path='createv2' element={
                                     wrapPageInLayout(
                                         <AuthenticatedPage>
                                             <RentalCalculatorCreationV2 />
+                                        </AuthenticatedPage>
+                                    )
+                                }/>
+                                <Route path='createv3' element={
+                                    wrapPageInLayout(
+                                        <AuthenticatedPage>
+                                            <RentalCalculatorCreationV3 />
                                         </AuthenticatedPage>
                                     )
                                 }/>
