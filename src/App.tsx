@@ -59,7 +59,7 @@ export const App = () => {
                                 <Home />
                             )} />
                         <Route path='/product'>
-                            <Route path={TOOL_IDS.RENTAL_CALCULATOR}>
+                            <Route path={TOOL_IDS.RENTAL_REPORT}>
                                 <Route path='create' element={
                                     wrapPageInLayout(
                                         <AuthenticatedPage>
@@ -105,7 +105,7 @@ export const App = () => {
                                 <Route index element={wrapPageInLayout(<RentalCalculatorHome />)} />
                             </Route>
                             <Route path={TOOL_IDS.RENT_ESTIMATOR} element={wrapPageInLayout(<RentEstimatorTool />)}/>
-                            <Route path={TOOL_IDS.ZILLOW_SCRAPER} element={wrapPageInLayout(<ZillowScraperLandingPage />)}/>
+                            <Route path={TOOL_IDS.MARKET_REPORTS} element={wrapPageInLayout(<ZillowScraperLandingPage />)}/>
                             <Route path={TOOL_IDS.BRRRR_CALCULATOR} element={wrapPageInLayout(<BRRRRCalculatorTool />)}/>
                             <Route path={TOOL_IDS.COMPREHENSIVE_PROPERTY_ANALYSIS} element={wrapPageInLayout(<ComprehensivePropertyAnalysis />)}/>
                             <Route path={TOOL_IDS.AI_REAL_ESTATE_AGENT} element={wrapPageInLayout(<AIRealEstateAgent />)}/>
