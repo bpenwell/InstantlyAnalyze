@@ -1,14 +1,14 @@
 {
-  "name": "@bpenwell/rei-app-root",
+  "name": "@bpenwell/instantlyanalyze",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
     "@auth0/auth0-react": "^2.2.4",
     "@aws-sdk/client-dynamodb": "^3.649.0",
     "@aws-sdk/lib-dynamodb": "^3.649.0",
-    "@bpenwell/rei-components": "file:../REI-Components",
-    "@bpenwell/rei-layouts": "file:../REI-Layouts",
-    "@bpenwell/rei-module": "file:../REI-Module",
+    "@bpenwell/instantlyanalyze-components": "file:../InstantlyAnalyze-Components",
+    "@bpenwell/instantlyanalyze-layouts": "file:../InstantlyAnalyze-Layouts",
+    "@bpenwell/instantlyanalyze-module": "file:../InstantlyAnalyze-Module",
     "@cloudscape-design/board-components": "^3.0.81",
     "@cloudscape-design/collection-hooks": "^1.0.55",
     "@cloudscape-design/components": "^3.0.793",

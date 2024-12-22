@@ -2,7 +2,7 @@ import './index.css';
 import reportWebVitals from './reportWebVitals';
 import { App } from './App';
 import { createRoot } from 'react-dom/client';
-import { auth0Props } from '@bpenwell/rei-module';
+import { auth0Props } from '@bpenwell/instantlyanalyze-module';
 import { Auth0Provider } from '@auth0/auth0-react';
 import '@cloudscape-design/global-styles/index.css'; // Correct import path
 

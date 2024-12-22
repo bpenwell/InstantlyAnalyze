@@ -56,9 +56,9 @@ module.exports = {
   resolve: {
     extensions: ['.ts', '.tsx', '.js', '.jsx'],
     alias: {
-      '@bpenwell/rei-module': path.resolve(__dirname, 'node_modules/@bpenwell/rei-module'),
-      '@bpenwell/rei-components': path.resolve(__dirname, 'node_modules/@bpenwell/rei-components'),
-      '@bpenwell/rei-layouts': path.resolve(__dirname, 'node_modules/@bpenwell/rei-layouts'),
+      '@bpenwell/instantlyanalyze-module': path.resolve(__dirname, 'node_modules/@bpenwell/instantlyanalyze-module'),
+      '@bpenwell/instantlyanalyze-components': path.resolve(__dirname, 'node_modules/@bpenwell/instantlyanalyze-components'),
+      '@bpenwell/instantlyanalyze-layouts': path.resolve(__dirname, 'node_modules/@bpenwell/instantlyanalyze-layouts'),
       'react': path.resolve(__dirname, 'node_modules/react'),
       'react': path.resolve(__dirname, 'node_modules/react'),
       'react-dom': path.resolve(__dirname, 'node_modules/react-dom'),

@@ -190,19 +190,19 @@ server_package() {
 
 # Function to build all packages
 build_all_packages() {
-    build_package "REI-Module"
-    build_package "REI-Components"
-    build_package "REI-Layouts"
-    build_package "REI-Tool"
+    build_package "InstantlyAnalyze-Module"
+    build_package "InstantlyAnalyze-Components"
+    build_package "InstantlyAnalyze-Layouts"
+    build_package "InstantlyAnalyze"
 }
 
 # Function to start all servers
 start_all_servers() {
     echo -e "${GREEN}Starting servers...${NC}"
-    server_package "REI-Module" & 
-    server_package "REI-Components" & 
-    server_package "REI-Layouts" &
-    server_package "REI-Tool" &
+    server_package "InstantlyAnalyze-Module" & 
+    server_package "InstantlyAnalyze-Components" & 
+    server_package "InstantlyAnalyze-Layouts" &
+    server_package "InstantlyAnalyze" &
 }
 
 # Main execution logic based on options
@@ -223,7 +223,7 @@ if [ "$server_mode" = true ]; then
 
 elif [ "$buildLambdaOnly" = true ]; then
     # Build Lambda Only Mode: Build only the Lambda functions
-    build_lambda "REI-Tool"
+    build_lambda "InstantlyAnalyze"
 
 else
     # Default Mode: Build all packages
@@ -231,7 +231,7 @@ else
 
     # If buildLambda flag is set, build Lambda functions in addition
     if [ "$buildLambda" = true ]; then
-        build_lambda "REI-Tool"
+        build_lambda "InstantlyAnalyze"
     fi
 
     # Start all servers

@@ -6,9 +6,8 @@ import {
     AuthenticatedPage,
     ErrorBoundary,
     AppLayoutPreview,
-} from '@bpenwell/rei-components';
+} from '@bpenwell/instantlyanalyze-components';
 import { ContactUs,
-    Products,
     Home,
     NavBar,
     PageNotFound,
@@ -26,8 +25,8 @@ import { ContactUs,
     RentalCalculatorViewV2,
     RentalCalculatorViewV3,
     ZillowScraperLandingPage,
-} from '@bpenwell/rei-layouts';
-import { LOCAL_STORAGE_KEYS, TOOL_IDS, useLocalStorage } from '@bpenwell/rei-module';
+} from '@bpenwell/instantlyanalyze-layouts';
+import { LOCAL_STORAGE_KEYS, TOOL_IDS, useLocalStorage } from '@bpenwell/instantlyanalyze-module';
 import { applyMode, applyDensity, Density, Mode } from '@cloudscape-design/global-styles';
 
 export const App = () => {
@@ -109,7 +108,6 @@ export const App = () => {
                             <Route path={TOOL_IDS.BRRRR_CALCULATOR} element={wrapPageInLayout(<BRRRRCalculatorTool />)}/>
                             <Route path={TOOL_IDS.COMPREHENSIVE_PROPERTY_ANALYSIS} element={wrapPageInLayout(<ComprehensivePropertyAnalysis />)}/>
                             <Route path={TOOL_IDS.AI_REAL_ESTATE_AGENT} element={wrapPageInLayout(<AIRealEstateAgent />)}/>
-                            <Route index element={<Products />} />
                         </Route>
                         <Route path='/contact-us' element={wrapPageInLayout(<ContactUs />)} />
                         <Route path='/dashboard' element={  
