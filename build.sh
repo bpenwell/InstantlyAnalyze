@@ -45,7 +45,6 @@ show_help() {
   echo "  --auditFix         Run npm audit fix before building"
   echo "  --quiet            Suppress output messages"
   echo "  --buildLambda      Build Lambda functions in addition to building packages"
-  echo "  --buildLambdaOnly  Build only the Lambda functions and skip other build steps"
   echo "  --server           Skip building and directly start the servers"
   echo 
   exit 0
@@ -64,7 +63,6 @@ cleanup() {
 # Parse parameters
 install=false
 buildLambda=false
-buildLambdaOnly=false
 server_mode=false
 clean=false
 cleanNode=false
@@ -76,7 +74,6 @@ while [[ "$#" -gt 0 ]]; do
   case $1 in
     --help) show_help ;;
     --buildLambda) buildLambda=true ;;
-    --buildLambdaOnly) buildLambdaOnly=true ;;
     --server) server_mode=true ;;
     --install) install=true ;;
     --clean) clean=true ;;
@@ -91,12 +88,6 @@ while [[ "$#" -gt 0 ]]; do
   esac
   shift
 done
-
-# Validate exclusive options
-if [ "$buildLambdaOnly" = true ] && [ "$server_mode" = true ]; then
-  echo -e "${RED}Error: --buildLambdaOnly and --server options cannot be used together.${NC}"
-  exit 1
-fi
 
 if [ "$server_mode" = true ]; then
   if [ "$install" = true ] || [ "$clean" = true ] || [ "$cleanNode" = true ] || [ "$prune" = true ] || [ "$auditFix" = true ] || [ "$buildLambda" = true ]; then
@@ -220,10 +211,6 @@ if [ "$server_mode" = true ]; then
     # Run the start command and handle errors
     echo -e "${GREEN}Running npm run start...${NC}"
     eval "npm run start $output_redirect" || { echo -e "${RED}Error: Failed to run npm run start${NC}"; true; }
-
-elif [ "$buildLambdaOnly" = true ]; then
-    # Build Lambda Only Mode: Build only the Lambda functions
-    build_lambda "InstantlyAnalyze"
 
 else
     # Default Mode: Build all packages

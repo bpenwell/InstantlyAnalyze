@@ -6,6 +6,7 @@ import {
     AuthenticatedPage,
     ErrorBoundary,
     AppLayoutPreview,
+    Profile,
 } from '@bpenwell/instantlyanalyze-components';
 import { ContactUs,
     Home,
@@ -45,13 +46,15 @@ export const App = () => {
 
     const wrapPageInLayout = (component: React.JSX.Element) => {
         return (
-            <AppLayoutPreview children={component}/>
+            <>
+                <NavBar />
+                <AppLayoutPreview children={component}/>
+            </>
         );
     }
     return (
         <ErrorBoundary>
             <HashRouter>
-                <NavBar />
                 <div className='fullPage'>
                     <Routes>
                         <Route path='/' element={wrapPageInLayout(
@@ -110,6 +113,7 @@ export const App = () => {
                             <Route path={TOOL_IDS.AI_REAL_ESTATE_AGENT} element={wrapPageInLayout(<AIRealEstateAgent />)}/>
                         </Route>
                         <Route path='/contact-us' element={wrapPageInLayout(<ContactUs />)} />
+                        <Route path='/profile' element={wrapPageInLayout(<Profile />)} />
                         <Route path='/dashboard' element={  
                             wrapPageInLayout(
                                 <AuthenticatedPage>
