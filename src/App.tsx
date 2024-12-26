@@ -6,14 +6,13 @@ import {
     AuthenticatedPage,
     ErrorBoundary,
     AppLayoutPreview,
-    Profile,
+    AppContextProvider,
+    Header,
 } from '@bpenwell/instantlyanalyze-components';
 import { ContactUs,
     Home,
-    NavBar,
     PageNotFound,
     Dashboard,
-    RentalCalculatorView,
     RentalCalculatorCreation,
     RentalCalculatorCreationV2,
     RentalCalculatorCreationV3,
@@ -23,11 +22,17 @@ import { ContactUs,
     BRRRRCalculatorTool,
     ComprehensivePropertyAnalysis,
     AIRealEstateAgent,
-    RentalCalculatorViewV2,
     RentalCalculatorViewV3,
     ZillowScraperLandingPage,
+    Profile,
+    Subscribe,
 } from '@bpenwell/instantlyanalyze-layouts';
-import { LOCAL_STORAGE_KEYS, TOOL_IDS, useLocalStorage } from '@bpenwell/instantlyanalyze-module';
+import {
+    LOCAL_STORAGE_KEYS,
+    TOOL_IDS,
+    useLocalStorage,
+    PAGE_PATH,
+} from '@bpenwell/instantlyanalyze-module';
 import { applyMode, applyDensity, Density, Mode } from '@cloudscape-design/global-styles';
 
 export const App = () => {
@@ -46,10 +51,10 @@ export const App = () => {
 
     const wrapPageInLayout = (component: React.JSX.Element) => {
         return (
-            <>
-                <NavBar />
+            <AppContextProvider>
+                <Header />
                 <AppLayoutPreview children={component}/>
-            </>
+            </AppContextProvider>
         );
     }
     return (
@@ -57,7 +62,7 @@ export const App = () => {
             <HashRouter>
                 <div className='fullPage'>
                     <Routes>
-                        <Route path='/' element={wrapPageInLayout(
+                        <Route path={PAGE_PATH.HOME} element={wrapPageInLayout(
                                 <Home />
                             )} />
                         <Route path='/product'>
@@ -113,8 +118,9 @@ export const App = () => {
                             <Route path={TOOL_IDS.AI_REAL_ESTATE_AGENT} element={wrapPageInLayout(<AIRealEstateAgent />)}/>
                         </Route>
                         <Route path='/contact-us' element={wrapPageInLayout(<ContactUs />)} />
-                        <Route path='/profile' element={wrapPageInLayout(<Profile />)} />
-                        <Route path='/dashboard' element={  
+                        <Route path={PAGE_PATH.PROFILE} element={wrapPageInLayout(<Profile />)} />
+                        <Route path={PAGE_PATH.SUBSCRIBE} element={wrapPageInLayout(<Subscribe />)} />
+                        <Route path={PAGE_PATH.DASHBOARD} element={  
                             wrapPageInLayout(
                                 <AuthenticatedPage>
                                     <Dashboard />

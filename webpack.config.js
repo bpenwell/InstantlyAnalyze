@@ -89,5 +89,13 @@ module.exports = {
     static: path.resolve(__dirname, 'dist'),
     compress: true,
     port: 3000,
+    proxy: {
+      // For example, any AJAX call to /create-checkout-session 
+      // will get forwarded to http://localhost:4242
+      '/create-checkout-session': {
+        target: 'http://localhost:4242',
+        secure: false
+      }
+    }
   },
 };

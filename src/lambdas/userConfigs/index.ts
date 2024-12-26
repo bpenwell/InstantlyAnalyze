@@ -4,7 +4,7 @@ import { DynamoDBClient } from '@aws-sdk/client-dynamodb';
 
 interface IUserConfigs {
   userId: string;
-  status: 'free' | 'paid' | 'admin';
+  status: 'undefined' | 'free' | 'paid' | 'admin';
   freeReportsAvailable?: number;
 }
 
