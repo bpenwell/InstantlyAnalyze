@@ -1,6 +1,6 @@
-import React, { useEffect } from 'react';
+import React, { ReactNode, useEffect } from 'react';
 import './index.css';
-import { BrowserRouter, HashRouter, Route, Routes } from 'react-router-dom';
+import { BrowserRouter, HashRouter, Route, Routes, useParams } from 'react-router-dom';
 import {
     Footer,
     AuthenticatedPage,
@@ -57,6 +57,18 @@ export const App = () => {
             </AppContextProvider>
         );
     }
+    const smartAuthComponent = (component: React.JSX.Element) => {
+        const { id } = useParams();
+        return id === 'demo' ? (
+            wrapPageInLayout(component)
+        ) : (
+            wrapPageInLayout(
+                <AuthenticatedPage>
+                    {component}
+                </AuthenticatedPage>
+            )
+        );
+    };
     return (
         <ErrorBoundary>
             <HashRouter>
@@ -103,11 +115,7 @@ export const App = () => {
                                     )
                                 }/>
                                 <Route path='view/:id' element={
-                                    wrapPageInLayout(
-                                        <AuthenticatedPage>
-                                            <RentalCalculator />
-                                        </AuthenticatedPage>
-                                    )
+                                    smartAuthComponent(<RentalCalculator />)
                                 }/>
                                 <Route index element={wrapPageInLayout(<RentalCalculatorHome />)} />
                             </Route>
