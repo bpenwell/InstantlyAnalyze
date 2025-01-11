@@ -36,6 +36,34 @@ const fetchPropertyData = async (fullAddress) => {
   }
 };
 
+// Helper function to fetch estimated rent from the external API
+const fetchEstimatedRent = async (address, propertyType = 'Single Family', bedrooms, bathrooms, squareFootage) => {
+  const apiKey = process.env.API_KEY;
+  if (!apiKey) {
+    throw new Error('API key is missing in environment variables');
+  }
+
+  const url = `https://api.rentcast.io/v1/avm/rent/long-term?address=${encodeURIComponent(address)}&propertyType=${encodeURIComponent(propertyType)}&bedrooms=${bedrooms}&bathrooms=${bathrooms}&squareFootage=${squareFootage}`;
+  const response = await fetch(url, {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+      'X-Api-Key': apiKey,
+    },
+  });
+
+  if (!response.ok) {
+    throw new Error(`Failed to fetch estimated rent: ${response.status} ${response.statusText}`);
+  }
+
+  try {
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    throw new Error('Failed to parse estimated rent response');
+  }
+};
+
 // Helper function to construct full address from individual components
 // All params are string
 const constructFullAddress = (street, city, state, zip) => {
@@ -126,9 +154,13 @@ export const handler = async (event) => {
       const city = requestBody.city;
       const state = requestBody.state;
       const zip = requestBody.zipCode;
+      const propertyType = requestBody.propertyType || 'Single Family';
+      const bedrooms = requestBody.bedrooms;
+      const bathrooms = requestBody.bathrooms;
+      const squareFootage = requestBody.squareFootage;
 
-      if (!street || !city || !state || !zip) {
-        throw new Error('Street, city, state, and zip parameters are required');
+      if (!street || !city || !state || !zip || !propertyType || !bedrooms || !bathrooms || !squareFootage) {
+        throw new Error('Street, city, state, zip, propertyType, bedrooms, bathrooms, and squareFootage parameters are required');
       }
 
       // Construct the full address string
@@ -148,7 +180,7 @@ export const handler = async (event) => {
         body = JSON.stringify(cachedData.Item);
       } else {
         // Set the maximum allowed API calls per month
-        const maxApiCallsPerMonth = parseInt(process.env.MAX_API_CALLS_PER_MONTH, 10) || 50;
+        const maxApiCallsPerMonth = parseInt(process.env.MAX_API_CALLS_PER_MONTH, 10) || 48;
         const currentCallsThisMonth = await getApiUsageCount();
         console.log(`currentCallsThisMonth=${currentCallsThisMonth}`);
   
@@ -158,10 +190,12 @@ export const handler = async (event) => {
         } else {
           // If data doesn't exist, call the external API
           const propertyData = await fetchPropertyData(fullAddress);
+          const estimatedRent = await fetchEstimatedRent(fullAddress, propertyType, bedrooms, bathrooms, squareFootage);
 
           // Atomically update the API usage count and ensure we do not exceed the limit
           try {
-            await updateApiUsageCount(1, maxApiCallsPerMonth);
+            //+2 because we are making 2 API calls
+            await updateApiUsageCount(2, maxApiCallsPerMonth);
           } catch (error) {
             if (error.name === 'ConditionalCheckFailedException') {
               body = JSON.stringify({ error: 'API limit exceeded. Please try again later.' });
@@ -175,6 +209,7 @@ export const handler = async (event) => {
           const item = {
             address: fullAddress,
             propertyData,
+            estimatedRent,
             timestamp: formatISO(new Date()),
             expirationDate,
           };
