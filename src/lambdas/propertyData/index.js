@@ -1,12 +1,12 @@
 /* global fetch */
 import { DynamoDB } from '@aws-sdk/client-dynamodb';
 import { DynamoDBDocument } from '@aws-sdk/lib-dynamodb';
-// Importing specific functions instead of bundling them to avoid esbuild errors
-import formatISO from 'date-fns/formatISO';
-import addDays from 'date-fns/addDays';
+import { constructFullAddress, cacheApiResponse, checkAndUpdateApiUsage, getExpirationTime, getApiUsageCount, updateApiUsageCount } from '../utils/lambdaUtils';
+import { API_USAGE_TABLE_NAME, RENTCAST_API_NAME } from '../utils/lambdaConstants';
 
 const dynamo = DynamoDBDocument.from(new DynamoDB());
-const API_NAME = 'rentcast';
+const PropertyDataTableName = 'PropertyData';
+const KEY_NAME = 'address';
 
 // Helper function to fetch data from the external property API
 const fetchPropertyData = async (fullAddress) => {
@@ -14,7 +14,7 @@ const fetchPropertyData = async (fullAddress) => {
   if (!apiKey) {
     throw new Error('API key is missing in environment variables');
   }
-  
+
   console.debug(`[fetchPropertyData]: encode=${encodeURIComponent(fullAddress)}`);
   const response = await fetch(`https://api.rentcast.io/v1/properties?address=${encodeURIComponent(fullAddress)}`, {
     method: 'GET',
@@ -36,76 +36,6 @@ const fetchPropertyData = async (fullAddress) => {
   }
 };
 
-// Helper function to fetch estimated rent from the external API
-const fetchEstimatedRent = async (address, propertyType = 'Single Family', bedrooms, bathrooms, squareFootage) => {
-  const apiKey = process.env.API_KEY;
-  if (!apiKey) {
-    throw new Error('API key is missing in environment variables');
-  }
-
-  const url = `https://api.rentcast.io/v1/avm/rent/long-term?address=${encodeURIComponent(address)}&propertyType=${encodeURIComponent(propertyType)}&bedrooms=${bedrooms}&bathrooms=${bathrooms}&squareFootage=${squareFootage}`;
-  const response = await fetch(url, {
-    method: 'GET',
-    headers: {
-      'Content-Type': 'application/json',
-      'X-Api-Key': apiKey,
-    },
-  });
-
-  if (!response.ok) {
-    throw new Error(`Failed to fetch estimated rent: ${response.status} ${response.statusText}`);
-  }
-
-  try {
-    const data = await response.json();
-    return data;
-  } catch (error) {
-    throw new Error('Failed to parse estimated rent response');
-  }
-};
-
-// Helper function to construct full address from individual components
-// All params are string
-const constructFullAddress = (street, city, state, zip) => {
-  return `${street}, ${city}, ${state}, ${zip}`;
-};
-
-// Helper function to calculate expiration time (in seconds)
-// hoursToLive is string
-const getExpirationTime = (hoursToLive) => {
-    const currentTime = Math.floor(Date.now() / 1000);
-    return currentTime + hoursToLive * 3600;
-};
-
-// Helper function to get API usage count
-const getApiUsageCount = async () => {
-  const params = {
-    TableName: 'ApiUsage',
-    Key: { apiName: API_NAME }, // Use API_NAME as the key
-  };
-  const data = await dynamo.get(params);
-  return data.Item && typeof data.Item.count === 'number' ? data.Item.count : 0;
-};
-
-// Helper function to update API usage count atomically
-const updateApiUsageCount = async (incrementBy, maxApiCallsPerMonth) => {
-  const params = {
-    TableName: 'ApiUsage',
-    Key: { apiName: API_NAME }, // Use API_NAME as the key
-    UpdateExpression: 'ADD #count :incrementBy',
-    ConditionExpression: '#count < :maxLimit',
-    ExpressionAttributeNames: {
-      '#count': 'count',
-    },
-    ExpressionAttributeValues: {
-      ':incrementBy': incrementBy,
-      ':maxLimit': maxApiCallsPerMonth,
-    },
-    ReturnValues: 'UPDATED_NEW',
-  };
-  await dynamo.update(params);
-};
-
 // Define CORS headers
 const CORS_HEADERS = {
   'Access-Control-Allow-Origin': '*', // Update this to your frontend's origin
@@ -113,10 +43,11 @@ const CORS_HEADERS = {
   'Access-Control-Allow-Headers': 'Content-Type, Authorization',
   // 'Access-Control-Allow-Credentials': 'true', // Uncomment if you need to allow credentials
 };
+
 export const handler = async (event) => {
   let body;
   let statusCode = 200;
-  
+
   // Initialize headers with CORS headers and Content-Type
   const headers = {
     ...CORS_HEADERS,
@@ -141,7 +72,7 @@ export const handler = async (event) => {
 
     // Handle CloudWatch scheduled reset event
     if (event.action === 'resetUsageCount') {
-      await resetApiUsageCount();
+      await resetApiUsageCount(RENTCAST_API_NAME, API_USAGE_TABLE_NAME);
       body = JSON.stringify({ message: 'API usage count reset successfully.' });
     } else {
       // Parse the request body, which will contain the address data
@@ -154,13 +85,9 @@ export const handler = async (event) => {
       const city = requestBody.city;
       const state = requestBody.state;
       const zip = requestBody.zipCode;
-      const propertyType = requestBody.propertyType || 'Single Family';
-      const bedrooms = requestBody.bedrooms;
-      const bathrooms = requestBody.bathrooms;
-      const squareFootage = requestBody.squareFootage;
 
-      if (!street || !city || !state || !zip || !propertyType || !bedrooms || !bathrooms || !squareFootage) {
-        throw new Error('Street, city, state, zip, propertyType, bedrooms, bathrooms, and squareFootage parameters are required');
+      if (!street || !city || !state || !zip) {
+        throw new Error('Street, city, state, and zip parameters are required');
       }
 
       // Construct the full address string
@@ -168,7 +95,7 @@ export const handler = async (event) => {
 
       // Check if data for the address already exists in DynamoDB
       const getItemParams = {
-        TableName: 'PropertyData',
+        TableName: PropertyDataTableName,
         Key: { address: fullAddress },
       };
 
@@ -180,49 +107,33 @@ export const handler = async (event) => {
         body = JSON.stringify(cachedData.Item);
       } else {
         // Set the maximum allowed API calls per month
-        const maxApiCallsPerMonth = parseInt(process.env.MAX_API_CALLS_PER_MONTH, 10) || 48;
-        const currentCallsThisMonth = await getApiUsageCount();
-        console.log(`currentCallsThisMonth=${currentCallsThisMonth}`);
-  
-        if (currentCallsThisMonth >= maxApiCallsPerMonth) {
-          // If max API calls have been reached, return an appropriate response
-          body = JSON.stringify({ error: 'API limit exceeded. Please try again later.' });
-        } else {
-          // If data doesn't exist, call the external API
-          const propertyData = await fetchPropertyData(fullAddress);
-          const estimatedRent = await fetchEstimatedRent(fullAddress, propertyType, bedrooms, bathrooms, squareFootage);
+        const maxApiCallsPerMonth = parseInt(process.env.MAX_API_CALLS_PER_MONTH) || 48;
+        console.log(`maxApiCallsPerMonth=${maxApiCallsPerMonth}`);
 
-          // Atomically update the API usage count and ensure we do not exceed the limit
-          try {
-            //+2 because we are making 2 API calls
-            await updateApiUsageCount(2, maxApiCallsPerMonth);
-          } catch (error) {
-            if (error.name === 'ConditionalCheckFailedException') {
-              body = JSON.stringify({ error: 'API limit exceeded. Please try again later.' });
-            } else {
-              throw error;
-            }
+        // Atomically update the API usage count and ensure we do not exceed the limit
+        try {
+          await checkAndUpdateApiUsage(API_USAGE_TABLE_NAME, RENTCAST_API_NAME, 1, maxApiCallsPerMonth);
+        } catch (error) {
+          if (error.name === 'ConditionalCheckFailedException') {
+            body = JSON.stringify({ error: 'API limit exceeded. Please try again later.' });
+            return {
+              statusCode: 429,
+              headers,
+              body,
+            };
+          } else {
+            throw error;
           }
-
-          // Cache the API response in DynamoDB with an expiration date
-          const expirationDate = formatISO(addDays(new Date(), 30)); // Set cache expiration to 30 days from now
-          const item = {
-            address: fullAddress,
-            propertyData,
-            estimatedRent,
-            timestamp: formatISO(new Date()),
-            expirationDate,
-          };
-          const putItemParams = {
-            TableName: 'PropertyData',
-            Item: item,
-          };
-
-          await dynamo.put(putItemParams);
-
-          // Return the property data
-          body = JSON.stringify(item);
         }
+
+        // If data doesn't exist, call the external API
+        const propertyData = await fetchPropertyData(fullAddress);
+
+        // Cache the API response in DynamoDB with an expiration date
+        const item = await cacheApiResponse('PropertyData', KEY_NAME, fullAddress, propertyData);
+
+        // Return the property data
+        body = JSON.stringify(item);
       }
     }
   } catch (error) {
@@ -235,20 +146,4 @@ export const handler = async (event) => {
     headers,
     body,
   };
-};
-
-// Helper function to reset API usage count at the beginning of each month
-export const resetApiUsageCount = async () => {
-  const params = {
-    TableName: 'ApiUsage',
-    Key: { apiName: API_NAME }, // Use API_NAME as the key
-    UpdateExpression: 'SET #count = :value',
-    ExpressionAttributeNames: {
-      '#count': 'count',
-    },
-    ExpressionAttributeValues: {
-      ':value': 0,
-    },
-  };
-  await dynamo.update(params);
 };

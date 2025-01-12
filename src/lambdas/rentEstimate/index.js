@@ -1,9 +1,12 @@
 /* global fetch */
 import { DynamoDB } from '@aws-sdk/client-dynamodb';
 import { DynamoDBDocument } from '@aws-sdk/lib-dynamodb';
+import { cacheApiResponse, checkAndUpdateApiUsage, resetApiUsageCount } from '../utils/lambdaUtils';
+import { API_USAGE_TABLE_NAME, RENTCAST_API_NAME } from '../utils/lambdaConstants';
 
 const dynamo = DynamoDBDocument.from(new DynamoDB());
-const API_NAME = 'rentcast';
+const PropertyRentEstimatesTableName = 'PropertyRentEstimates';
+const KEY_NAME = 'rentEstimateKey';
 
 // Helper function to fetch estimated rent from the external API
 const fetchEstimatedRent = async (address, propertyType = 'Single Family', bedrooms, bathrooms, squareFootage) => {
@@ -67,33 +70,76 @@ export const handler = async (event) => {
       };
     }
 
-    // Parse the request body, which will contain the address data
-    console.log('event:');
-    console.log(event);
-    const requestBody = JSON.parse(event.body || '{}');
-    console.log(requestBody);
+    // Handle CloudWatch scheduled reset event
+    if (event.action === 'resetUsageCount') {
+      await resetApiUsageCount(RENTCAST_API_NAME, ApiUsageTableName);
+      body = JSON.stringify({ message: 'API usage count reset successfully.' });
+    } else {
+      // Parse the request body, which will contain the address data
+      console.log('event:');
+      console.log(event);
+      const requestBody = JSON.parse(event.body || '{}');
+      console.log(requestBody);
 
-    const street = requestBody.streetAddress;
-    const city = requestBody.city;
-    const state = requestBody.state;
-    const zip = requestBody.zipCode;
-    const propertyType = requestBody.propertyType || 'Single Family';
-    const bedrooms = requestBody.bedrooms;
-    const bathrooms = requestBody.bathrooms;
-    const squareFootage = requestBody.squareFootage;
+      const street = requestBody.streetAddress;
+      const city = requestBody.city;
+      const state = requestBody.state;
+      const zip = requestBody.zipCode;
+      const propertyType = requestBody.propertyType || 'Single Family';
+      const bedrooms = requestBody.bedrooms;
+      const bathrooms = requestBody.bathrooms;
+      const squareFootage = requestBody.squareFootage;
 
-    if (!street || !city || !state || !zip || !propertyType || !bedrooms || !bathrooms || !squareFootage) {
-      throw new Error('Street, city, state, zip, propertyType, bedrooms, bathrooms, and squareFootage parameters are required');
+      if (!street || !city || !state || !zip || !propertyType || !bedrooms || !bathrooms || !squareFootage) {
+        throw new Error('Street, city, state, zip, propertyType, bedrooms, bathrooms, and squareFootage parameters are required');
+      }
+
+      // Construct the full address string
+      const fullAddress = `${street}, ${city}, ${state}, ${zip}`;
+      const key = `${street}-${city}-${state}-${propertyType}-${bedrooms}-${bathrooms}-${squareFootage}`;
+
+      // Check if data for the address already exists in DynamoDB
+      const getItemParams = {
+        TableName: PropertyRentEstimatesTableName,
+        Key: { rentEstimateKey: key },
+      };
+
+      const cachedData = await dynamo.get(getItemParams);
+      console.debug(`cachedData`);
+      console.debug(cachedData);
+      if (cachedData.Item) {
+        // If data exists in DynamoDB, return it
+        body = JSON.stringify(cachedData.Item);
+      } else {
+        const maxApiCallsPerMonth = parseInt(process.env.MAX_API_CALLS_PER_MONTH) || 48;
+        console.log(`maxApiCallsPerMonth=${maxApiCallsPerMonth}`);
+
+        // Atomically update the API usage count and ensure we do not exceed the limit
+        try {
+          await checkAndUpdateApiUsage(API_USAGE_TABLE_NAME, RENTCAST_API_NAME, 1, maxApiCallsPerMonth);
+        } catch (error) {
+          if (error.name === 'ConditionalCheckFailedException') {
+            body = JSON.stringify({ error, message: 'API limit exceeded. Please try again later.' });
+            return {
+              statusCode: 429,
+              headers,
+              body,
+            };
+          } else {
+            throw error;
+          }
+        }
+
+        // If data doesn't exist, call the external API
+        const estimatedRent = await fetchEstimatedRent(fullAddress, propertyType, bedrooms, bathrooms, squareFootage);
+
+        // Cache the API response in DynamoDB with an expiration date
+        const item = await cacheApiResponse(PropertyRentEstimatesTableName, KEY_NAME, key, estimatedRent);
+
+        // Return the property data
+        body = JSON.stringify(item);
+      }
     }
-
-    // Construct the full address string
-    const fullAddress = `${street}, ${city}, ${state}, ${zip}`;
-
-    // Fetch the estimated rent data
-    const estimatedRent = await fetchEstimatedRent(fullAddress, propertyType, bedrooms, bathrooms, squareFootage);
-
-    // Return the estimated rent data
-    body = JSON.stringify(estimatedRent);
   } catch (error) {
     statusCode = 400;
     body = JSON.stringify({ error: error.message });
