@@ -115,7 +115,12 @@ export const App = () => {
                                     )
                                 }/>
                                 <Route path='view/:id' element={
-                                    smartAuthComponent(<RentalCalculator />)
+                                    smartAuthComponent(<RentalCalculator isShareView={false} />)
+                                }/>
+                                <Route path='share/:id' element={
+                                    wrapPageInLayout(
+                                        <RentalCalculator isShareView={true} />
+                                    )
                                 }/>
                                 <Route index element={wrapPageInLayout(<RentalCalculatorHome />)} />
                             </Route>
