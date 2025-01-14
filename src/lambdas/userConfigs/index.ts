@@ -1,6 +1,7 @@
 import { APIGatewayEvent, APIGatewayProxyResult, Context } from 'aws-lambda';
 import { GetCommand, PutCommand } from '@aws-sdk/lib-dynamodb';
 import { DynamoDBClient } from '@aws-sdk/client-dynamodb';
+import { createResponse } from '../utils/lambdaUtils';
 
 interface IUserConfigs {
   userId: string;
@@ -46,26 +47,20 @@ const createUserConfig = async (userId: string): Promise<IUserConfigs> => {
 };
 
 /**
- * Utility: Create an HTTP response
- */
-function createResponse(statusCode: number, body: unknown): APIGatewayProxyResult {
-  return {
-    statusCode,
-    body: JSON.stringify(body),
-    headers: {
-      'Content-Type': 'application/json',
-    },
-  };
-}
-
-/**
  * Lambda entry point
  */
 export const handler = async (
   event: APIGatewayEvent | any, 
   context: Context
 ): Promise<APIGatewayProxyResult> => {
-  console.log('Received event:', JSON.stringify(event, null, 2));
+  const method = event.requestContext.http.method;
+  // Handle preflight OPTIONS request
+  if (method === 'OPTIONS') {
+    console.log('Options request, sending headers');
+    // Respond with CORS headers and no body
+    return createResponse(200, '');
+  }
+
   try {
     const path = event.rawPath;
 
@@ -94,7 +89,7 @@ export const handler = async (
           });
         }
         else {
-          throw error;
+          throw createResponse(500, error);
         }
       }
     }

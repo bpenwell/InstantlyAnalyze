@@ -1,5 +1,6 @@
 import { DynamoDB, ReturnValue } from '@aws-sdk/client-dynamodb';
 import { DynamoDBDocument } from '@aws-sdk/lib-dynamodb';
+import { APIGatewayProxyResult } from 'aws-lambda';
 import { addDays, formatISO } from 'date-fns';
 
 const dynamo = DynamoDBDocument.from(new DynamoDB());
@@ -20,9 +21,9 @@ export const getApiUsageCount = async (TableName: string, apiName: string): Prom
   console.log(`DynamoDB get result: ${JSON.stringify(result)}`);
 
   if (result.Item?.count === undefined) {
-    throw new Error(`result.Item.count not found for getApiUsageCount on ${TableName} and apiName: ${apiName}`);
+    return 0;
   }
-  return result.Item ? result.Item.count : process.env.MAX_API_CALLS_PER_MONTH;
+  return result.Item.count;
 };
 
 export const updateApiUsageCount = async (TableName: string, apiName: string, incrementBy: number, maxApiCallsPerMonth: number): Promise<void> => {
@@ -67,12 +68,23 @@ export const cacheApiResponse = async (TableName: string, KEY_NAME: string, keyV
 export const checkAndUpdateApiUsage = async (TableName: string, apiName: string, incrementBy: number, maxApiCallsPerMonth: number): Promise<void> => {
   console.log(`Checking and updating API usage for ${apiName}`);
   const currentCallsThisMonth = await getApiUsageCount(TableName, apiName);
-  console.log(`Current calls this month for ${apiName}: ${currentCallsThisMonth}`);
-  if (currentCallsThisMonth >= maxApiCallsPerMonth) {
-    throw new Error(`API limit exceeded. Calls this month=${currentCallsThisMonth}. Please try again later.`);
+  if (currentCallsThisMonth + incrementBy > maxApiCallsPerMonth) {
+    throw new Error('API limit exceeded');
   }
-  
-  await updateApiUsageCount(TableName, apiName, incrementBy, maxApiCallsPerMonth);
+  const params = {
+    TableName,
+    Key: { apiName },
+    UpdateExpression: 'SET #count = if_not_exists(#count, :start) + :inc',
+    ExpressionAttributeNames: {
+      '#count': 'count',
+    },
+    ExpressionAttributeValues: {
+      ':start': 0,
+      ':inc': incrementBy,
+    },
+    ReturnValues: 'UPDATED_NEW' as ReturnValue,
+  };
+  await dynamo.update(params);
   console.log(`API usage count updated for ${apiName}`);
 };
 
@@ -96,8 +108,31 @@ export const resetApiUsageCount = async (api: string, tableName: string) => {
 };
 
 // Helper function to construct full address from individual components
-export const constructFullAddress = (street: string, city: string, state: string, zip: string) => {
+export const constructFullAddress = (street: string, city: string, state: string, zip: string): string => {
   const fullAddress = `${street}, ${city}, ${state}, ${zip}`;
   console.log(`Constructed full address: ${fullAddress}`);
   return fullAddress;
 };
+
+export const getHeaders = () => {
+  return {
+    'Access-Control-Allow-Origin': '*', // Or specify your actual domain
+    'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+    'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+    'Content-Type': 'application/json',
+    // 'Access-Control-Allow-Credentials': 'true', // Uncomment if needed
+  };
+};
+
+/**
+ * Utility: Create an HTTP response
+ */
+export const createResponse = (statusCode: number, body: any): APIGatewayProxyResult => {
+  const reponse = {
+    statusCode,
+    body: body,
+    headers: getHeaders(),
+  };
+  console.log('Returning ', reponse);
+  return reponse;
+}

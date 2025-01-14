@@ -1,15 +1,17 @@
 /* global fetch */
 import { DynamoDB } from '@aws-sdk/client-dynamodb';
 import { DynamoDBDocument } from '@aws-sdk/lib-dynamodb';
-import { constructFullAddress, cacheApiResponse, checkAndUpdateApiUsage, getExpirationTime, getApiUsageCount, updateApiUsageCount } from '../utils/lambdaUtils';
+import { constructFullAddress, cacheApiResponse, checkAndUpdateApiUsage, resetApiUsageCount } from '../utils/lambdaUtils';
 import { API_USAGE_TABLE_NAME, RENTCAST_API_NAME } from '../utils/lambdaConstants';
+import { createResponse } from '../utils/lambdaUtils';
+import { APIGatewayEvent } from 'aws-lambda';
 
 const dynamo = DynamoDBDocument.from(new DynamoDB());
 const PropertyDataTableName = 'PropertyData';
 const KEY_NAME = 'address';
 
 // Helper function to fetch data from the external property API
-const fetchPropertyData = async (fullAddress) => {
+const fetchPropertyData = async (fullAddress: string) => {
   const apiKey = process.env.API_KEY;
   if (!apiKey) {
     throw new Error('API key is missing in environment variables');
@@ -36,38 +38,16 @@ const fetchPropertyData = async (fullAddress) => {
   }
 };
 
-// Define CORS headers
-const CORS_HEADERS = {
-  'Access-Control-Allow-Origin': '*', // Update this to your frontend's origin
-  'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
-  'Access-Control-Allow-Headers': 'Content-Type, Authorization',
-  // 'Access-Control-Allow-Credentials': 'true', // Uncomment if you need to allow credentials
-};
-
-export const handler = async (event) => {
+export const handler = async (event: APIGatewayEvent | any) => {
   let body;
   let statusCode = 200;
 
-  // Initialize headers with CORS headers and Content-Type
-  const headers = {
-    ...CORS_HEADERS,
-    'Content-Type': 'application/json',
-  };
-
   try {
     const method = event.requestContext.http.method;
-    console.log(`event=${method}`);
-    console.log(`method=${method}`);
-
     // Handle preflight OPTIONS request
     if (method === 'OPTIONS') {
-      console.log('Options request, sending headers');
       // Respond with CORS headers and no body
-      return {
-        statusCode: 200,
-        headers: CORS_HEADERS,
-        body: '', // No content needed for OPTIONS response
-      };
+      return createResponse(200, '');
     }
 
     // Handle CloudWatch scheduled reset event
@@ -107,20 +87,16 @@ export const handler = async (event) => {
         body = JSON.stringify(cachedData.Item);
       } else {
         // Set the maximum allowed API calls per month
-        const maxApiCallsPerMonth = parseInt(process.env.MAX_API_CALLS_PER_MONTH) || 48;
+        const maxApiCallsPerMonth = parseInt(process.env.MAX_API_CALLS_PER_MONTH!) || 48;
         console.log(`maxApiCallsPerMonth=${maxApiCallsPerMonth}`);
 
         // Atomically update the API usage count and ensure we do not exceed the limit
         try {
           await checkAndUpdateApiUsage(API_USAGE_TABLE_NAME, RENTCAST_API_NAME, 1, maxApiCallsPerMonth);
-        } catch (error) {
+        } catch (error: any) {
           if (error.name === 'ConditionalCheckFailedException') {
             body = JSON.stringify({ error: 'API limit exceeded. Please try again later.' });
-            return {
-              statusCode: 429,
-              headers,
-              body,
-            };
+            return createResponse(429, body);
           } else {
             throw error;
           }
@@ -136,14 +112,10 @@ export const handler = async (event) => {
         body = JSON.stringify(item);
       }
     }
-  } catch (error) {
+  } catch (error: any) {
     statusCode = 400;
     body = JSON.stringify({ error: error.message });
   }
 
-  return {
-    statusCode,
-    headers,
-    body,
-  };
+  return createResponse(statusCode, body);
 };

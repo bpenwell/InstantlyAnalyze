@@ -6,6 +6,7 @@ import {
     getThread,
     waitForRunCompletion,
   } from './utils';
+import { createResponse } from '../utils/lambdaUtils';
   
 const OPENAI_API_KEY = process.env.OPENAI_API_KEY || '';
 const ASSISTANT_ID = process.env.ASSISTANT_ID || '';
@@ -28,20 +29,10 @@ export default async function handler(request: any) {
   
       const result = await waitForRunCompletion(run.id, thread.id);
   
-      return new Response(JSON.stringify(result.messages.data), {
-        status: 200,
-        headers: {
-          'content-type': 'application/json',
-        },
-      });
+      return createResponse(200, result.messages.data);
     } catch (err: unknown) {
       console.error('Error: ', err);
       const errorResponse = extractErrorMessage(err);
-      return new Response(JSON.stringify(errorResponse), {
-        status: 500,
-        headers: {
-          'content-type': 'application/json',
-        },
-      });
+      return createResponse(500, errorResponse);
     }
 }
