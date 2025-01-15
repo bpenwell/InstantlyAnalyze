@@ -1,175 +1,267 @@
 const { DynamoDBClient } = require('@aws-sdk/client-dynamodb');
-const { DynamoDBDocumentClient, GetCommand, PutCommand, DeleteCommand, UpdateCommand } = require('@aws-sdk/lib-dynamodb');
+const {
+  DynamoDBDocumentClient,
+  GetCommand,
+  PutCommand,
+  DeleteCommand,
+  UpdateCommand,
+} = require('@aws-sdk/lib-dynamodb');
 import { APIGatewayEvent } from 'aws-lambda';
 import { createResponse } from '../utils/lambdaUtils';
 import { IRentalCalculatorData } from '@bpenwell/instantlyanalyze-module';
+import { IRentalReportDatabaseEntry } from '@bpenwell/instantlyanalyze-module/dist/utils/BackendUtils';
 
 const client = new DynamoDBClient();
 const ddbDocClient = DynamoDBDocumentClient.from(client);
 const TABLE_NAME = 'RentalPropertyReport';
 
 exports.handler = async (event: APIGatewayEvent | any) => {
-  const method = event.requestContext.http.method;
+  // Log the incoming event
+  console.log('Received event:', JSON.stringify(event, null, 2));
+
+  // Extract the HTTP method from the event
+  const method = event.requestContext?.http?.method;
+  console.log(`HTTP method: ${method}`);
+
   // Handle preflight OPTIONS request
   if (method === 'OPTIONS') {
-    // Respond with CORS headers and no body
+    console.log('Preflight OPTIONS request received. Returning 200 with CORS headers.');
     return createResponse(200, '');
   }
 
-  const { action, reportId, userId = undefined, isSharable = false, reportData } = JSON.parse(event.body);
+  // Parse the body
+  let bodyJson;
+  try {
+    bodyJson = JSON.parse(event.body);
+  } catch (err) {
+    console.error('Failed to parse JSON body:', err);
+    return createResponse(400, JSON.stringify({ error: 'Invalid JSON input' }));
+  }
+
+  const { action, reportId, userId = undefined, reportData } = bodyJson;
+  console.log(`Action: ${action}, ReportID: ${reportId}, UserID: ${userId}`);
+
+  // Convert the reportData to the correct type
+  const typedReportData: IRentalCalculatorData = reportData as IRentalCalculatorData;
 
   switch (action) {
     case 'changeRentalReportSharability':
-      return await changeRentalReportSharability(reportId, userId, isSharable);
+      return await changeRentalReportSharability(reportId, userId, typedReportData);
     case 'getRentalReport':
       return await getRentalReport(reportId, userId);
     case 'saveRentalReport':
-      return await saveRentalReport(reportId, userId, reportData);
+      return await saveRentalReport(reportId, userId, typedReportData);
     case 'deleteRentalReport':
       return await deleteRentalReport(reportId, userId);
     default:
+      console.warn(`Invalid action received: ${action}`);
       return createResponse(400, JSON.stringify({ error: 'Invalid action' }));
   }
 };
 
-const changeRentalReportSharability = async (reportId: string, userId: string, isSharable: boolean) => {
-  try {
-    const { Item } = await ddbDocClient.send(new GetCommand({
-      TableName: TABLE_NAME,
-      Key: {
-        userId,
-        reportId,
-      },
-    }));
+const changeRentalReportSharability = async (
+  reportId: string,
+  userId: string,
+  reportData: IRentalCalculatorData
+) => {
+  console.log('changeRentalReportSharability called with:', {
+    reportId,
+    userId,
+    'reportData.isShareable': reportData?.isShareable,
+  });
 
-    if (!Item) {
+  try {
+    console.log(`Fetching item from DynamoDB for reportId: ${reportId}`);
+    const { Item } = await ddbDocClient.send(
+      new GetCommand({
+        TableName: TABLE_NAME,
+        Key: {
+          reportId,
+        },
+      })
+    );
+
+    const typedItem = Item as IRentalReportDatabaseEntry;
+    if (!typedItem) {
+      console.log(`Report not found with reportId: ${reportId}`);
       return createResponse(404, JSON.stringify({ error: 'Report not found' }));
     }
 
-    if (Item.userId !== userId) {
+    if (typedItem.userId !== userId) {
+      console.warn(
+        `User mismatch. Found userId: ${typedItem.userId}, Request userId: ${userId}`
+      );
       return createResponse(200, JSON.stringify({ error: 'AccessDeniedException' }));
     }
 
-    await ddbDocClient.send(new UpdateCommand({
-      TableName: TABLE_NAME,
-      Key: {
-        userId,
-        reportId,
-      },
-      UpdateExpression: 'set isSharable = :isSharable',
-      ExpressionAttributeValues: {
-        ':isSharable': isSharable,
-      },
-    }));
-
-    return createResponse(200, JSON.stringify({ message: 'Sharability updated' }));
-  } catch (error) {
-    console.error(error);
-    return createResponse(500, JSON.stringify({ error: 'Internal Server Error' }));
-  }
-};
-
-const getRentalReport = async (reportId: string, userId: string) => {
-  try {
-    const { Item } = await ddbDocClient.send(new GetCommand({
-      TableName: TABLE_NAME,
-      Key: {
-        userId,
-        reportId,
-      },
-    }));
-
-    if (!Item) {
-      return createResponse(404, JSON.stringify({ error: 'Report not found' }));
-    }
-
-    if (Item.isSharable || Item.userId === userId) {
-      return createResponse(200, JSON.stringify(Item));
-    }
-
-    return createResponse(200, JSON.stringify({ error: 'AccessDeniedException' }));
-  } catch (error) {
-    console.error(error);
-    return createResponse(500, JSON.stringify({ error: 'Internal Server Error' }));
-  }
-};
-
-const saveRentalReport = async (reportId: string, userId: string, reportData: IRentalCalculatorData) => {
-  try {
-    const { Item } = await ddbDocClient.send(new GetCommand({
-      TableName: TABLE_NAME,
-      Key: {
-        userId,
-        reportId,
-      },
-    }));
-
-    if (Item) {
-      if (Item.userId !== userId) {
-        return createResponse(200, JSON.stringify({ error: 'AccessDeniedException' }));
-      }
-
-      await ddbDocClient.send(new UpdateCommand({
+    console.log('Updating report sharability...');
+    await ddbDocClient.send(
+      new UpdateCommand({
         TableName: TABLE_NAME,
         Key: {
-          userId,
           reportId,
         },
         UpdateExpression: 'set reportData = :reportData',
         ExpressionAttributeValues: {
           ':reportData': reportData,
         },
-      }));
+      })
+    );
 
+    console.log('Sharability updated successfully.');
+    return createResponse(200, JSON.stringify({ message: 'Sharability updated' }));
+  } catch (error) {
+    console.error('Error in changeRentalReportSharability:', error);
+    return createResponse(500, JSON.stringify({ error: 'Internal Server Error' }));
+  }
+};
+
+const getRentalReport = async (reportId: string, userId: string) => {
+  console.log('getRentalReport called with:', { reportId, userId });
+
+  try {
+    console.log(`Fetching report with reportId: ${reportId}`);
+    const { Item } = await ddbDocClient.send(
+      new GetCommand({
+        TableName: TABLE_NAME,
+        Key: {
+          reportId,
+        },
+      })
+    );
+
+    const typedItem = Item as IRentalReportDatabaseEntry;
+    if (!typedItem) {
+      console.log(`Report not found with reportId: ${reportId}`);
+      return createResponse(404, JSON.stringify({ error: 'Report not found' }));
+    }
+
+    console.log('Checking if user can access or if report is shareable...');
+    if (typedItem.reportData.isShareable || typedItem.userId === userId) {
+      console.log('User can access this report. Returning report data...');
+      return createResponse(200, JSON.stringify(Item));
+    }
+
+    console.warn(
+      `Access denied. Report is not shareable and userId does not match. userId: ${userId}`
+    );
+    return createResponse(200, JSON.stringify({ error: 'AccessDeniedException' }));
+  } catch (error) {
+    console.error('Error in getRentalReport:', error);
+    return createResponse(500, JSON.stringify({ error: 'Internal Server Error' }));
+  }
+};
+
+const saveRentalReport = async (
+  reportId: string,
+  userId: string,
+  reportData: IRentalCalculatorData
+) => {
+  console.log('saveRentalReport called with:', {
+    reportId,
+    userId,
+    'reportData.isShareable': reportData?.isShareable,
+  });
+
+  try {
+    console.log(`Checking if report already exists with reportId: ${reportId}`);
+    const { Item } = await ddbDocClient.send(
+      new GetCommand({
+        TableName: TABLE_NAME,
+        Key: {
+          reportId,
+        },
+      })
+    );
+
+    const typedItem = Item as IRentalReportDatabaseEntry;
+    if (typedItem) {
+      if (typedItem.userId !== userId) {
+        console.warn(
+          `User mismatch when updating. Found userId: ${typedItem.userId}, Request userId: ${userId}`
+        );
+        return createResponse(200, JSON.stringify({ error: 'AccessDeniedException' }));
+      }
+
+      console.log('Updating existing report...');
+      await ddbDocClient.send(
+        new UpdateCommand({
+          TableName: TABLE_NAME,
+          Key: {
+            reportId,
+          },
+          UpdateExpression: 'set reportData = :reportData',
+          ExpressionAttributeValues: {
+            ':reportData': reportData,
+          },
+        })
+      );
+
+      console.log('Report updated successfully.');
       return createResponse(200, JSON.stringify({ message: 'Report updated' }));
     }
 
-    await ddbDocClient.send(new PutCommand({
-      TableName: TABLE_NAME,
-      Item: {
-        reportId,
-        userId,
-        reportData,
-        isSharable: false,
-      },
-    }));
+    console.log('Report does not exist. Creating new report...');
+    await ddbDocClient.send(
+      new PutCommand({
+        TableName: TABLE_NAME,
+        Item: {
+          reportId,
+          userId,
+          reportData,
+        },
+      })
+    );
 
+    console.log('Report created successfully.');
     return createResponse(200, JSON.stringify({ message: 'Report created' }));
   } catch (error) {
-    console.error(error);
+    console.error('Error in saveRentalReport:', error);
     return createResponse(500, JSON.stringify({ error: 'Internal Server Error' }));
   }
 };
 
 const deleteRentalReport = async (reportId: string, userId: string) => {
-  try {
-    const { Item } = await ddbDocClient.send(new GetCommand({
-      TableName: TABLE_NAME,
-      Key: { 
-        userId,
-        reportId
-      },
-    }));
+  console.log('deleteRentalReport called with:', { reportId, userId });
 
-    if (!Item) {
+  try {
+    console.log(`Fetching report with reportId: ${reportId} for deletion...`);
+    const { Item } = await ddbDocClient.send(
+      new GetCommand({
+        TableName: TABLE_NAME,
+        Key: {
+          reportId,
+        },
+      })
+    );
+
+    const typedItem = Item as IRentalReportDatabaseEntry;
+    if (!typedItem) {
+      console.log(`Report not found with reportId: ${reportId}`);
       return createResponse(404, JSON.stringify({ error: 'Report not found' }));
     }
 
-    if (Item.userId !== userId) {
+    if (typedItem.userId !== userId) {
+      console.warn(
+        `User mismatch when deleting. Found userId: ${typedItem.userId}, Request userId: ${userId}`
+      );
       return createResponse(200, JSON.stringify({ error: 'AccessDeniedException' }));
     }
 
-    await ddbDocClient.send(new DeleteCommand({
-      TableName: TABLE_NAME,
-      Key: { 
-        userId,
-        reportId,
-      },
-    }));
+    console.log('Deleting report...');
+    await ddbDocClient.send(
+      new DeleteCommand({
+        TableName: TABLE_NAME,
+        Key: {
+          reportId,
+        },
+      })
+    );
 
+    console.log('Report deleted successfully.');
     return createResponse(200, JSON.stringify({ message: 'Report deleted' }));
   } catch (error) {
-    console.error(error);
+    console.error('Error in deleteRentalReport:', error);
     return createResponse(500, JSON.stringify({ error: 'Internal Server Error' }));
   }
 };
