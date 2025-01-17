@@ -9,7 +9,9 @@ const {
 import { APIGatewayEvent } from 'aws-lambda';
 import { createResponse } from '../utils/lambdaUtils';
 import { IRentalCalculatorData } from '@bpenwell/instantlyanalyze-module';
-import { IRentalReportDatabaseEntry } from '@bpenwell/instantlyanalyze-module/dist/utils/BackendUtils';
+import { IRentalReportDatabaseEntry, IUserReportsDatabaseEntry } from '@bpenwell/instantlyanalyze-module/dist/utils/BackendUtils';
+import { USER_ID_INDEX } from '../utils/lambdaConstants';
+import { QueryCommand } from '@aws-sdk/lib-dynamodb';
 
 const client = new DynamoDBClient();
 const ddbDocClient = DynamoDBDocumentClient.from(client);
@@ -53,6 +55,8 @@ exports.handler = async (event: APIGatewayEvent | any) => {
       return await saveRentalReport(reportId, userId, typedReportData);
     case 'deleteRentalReport':
       return await deleteRentalReport(reportId, userId);
+    case 'getAllRentalReports':
+      return await getAllRentalReports(userId);
     default:
       console.warn(`Invalid action received: ${action}`);
       return createResponse(400, JSON.stringify({ error: 'Invalid action' }));
@@ -116,30 +120,35 @@ const changeRentalReportSharability = async (
   }
 };
 
+const requestRentalReport = async (reportId: string): Promise<IRentalReportDatabaseEntry> => {
+  const { Item } = await ddbDocClient.send(
+    new GetCommand({
+      TableName: TABLE_NAME,
+      Key: {
+        reportId,
+      },
+    })
+  );
+
+  return Item as IRentalReportDatabaseEntry;
+};
+
 const getRentalReport = async (reportId: string, userId: string) => {
   console.log('getRentalReport called with:', { reportId, userId });
 
   try {
     console.log(`Fetching report with reportId: ${reportId}`);
-    const { Item } = await ddbDocClient.send(
-      new GetCommand({
-        TableName: TABLE_NAME,
-        Key: {
-          reportId,
-        },
-      })
-    );
+    const entry = await requestRentalReport(reportId);
 
-    const typedItem = Item as IRentalReportDatabaseEntry;
-    if (!typedItem) {
+    if (!entry) {
       console.log(`Report not found with reportId: ${reportId}`);
       return createResponse(404, JSON.stringify({ error: 'Report not found' }));
     }
 
     console.log('Checking if user can access or if report is shareable...');
-    if (typedItem.reportData.isShareable || typedItem.userId === userId) {
+    if (entry.reportData.isShareable || entry.userId === userId) {
       console.log('User can access this report. Returning report data...');
-      return createResponse(200, JSON.stringify(Item));
+      return createResponse(200, JSON.stringify(entry));
     }
 
     console.warn(
@@ -262,6 +271,51 @@ const deleteRentalReport = async (reportId: string, userId: string) => {
     return createResponse(200, JSON.stringify({ message: 'Report deleted' }));
   } catch (error) {
     console.error('Error in deleteRentalReport:', error);
+    return createResponse(500, JSON.stringify({ error: 'Internal Server Error' }));
+  }
+};
+
+const getAllRentalReports = async (userId: string) => {
+  console.log('getAllRentalReports called with:', { userId });
+
+  try {
+    console.log(`Fetching all reports for userId: ${userId}`);
+    const { Items } = await ddbDocClient.send(
+      new QueryCommand({
+        TableName: TABLE_NAME,
+        IndexName: USER_ID_INDEX,
+        KeyConditionExpression: 'userId = :userId',
+        ExpressionAttributeValues: {
+          ':userId': userId,
+        },
+      })
+    );
+    const typedItems = Items as IUserReportsDatabaseEntry[];
+
+    if (!typedItems || typedItems.length === 0) {
+      console.log(`No reports found for userId: ${userId}`);
+      return createResponse(200, JSON.stringify(new Map<string,IRentalCalculatorData>()));
+    }
+    
+    // Call requestRentalReport in parallel for each typedItem.
+    console.log('Calling requestRentalReport in parallel for each item...');
+    const reportsArray = await Promise.all(
+      typedItems.map((item) => requestRentalReport(item.reportId))
+    );
+
+    // Build a map of reportId -> the corresponding report data
+    const reportsMap = typedItems.reduce<Record<string, IRentalCalculatorData>>(
+      (acc, item, index) => {
+        acc[item.reportId] = reportsArray[index].reportData;
+        return acc;
+      },
+      {}
+    );
+
+    console.log('Reports found. Returning reports...');
+    return createResponse(200, JSON.stringify(reportsMap));
+  } catch (error) {
+    console.error('Error in getAllRentalReports:', error);
     return createResponse(500, JSON.stringify({ error: 'Internal Server Error' }));
   }
 };

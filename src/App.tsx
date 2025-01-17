@@ -43,11 +43,12 @@ export const App = () => {
     applyMode(appMode);
     applyDensity(appDensity);
 
-    useEffect(() => {
+    //Only for hash router
+    /*useEffect(() => {
         if (!window.location.hash.includes('#/')) {
             window.location.hash = `#/${window.location.hash}`
         }
-    }, [window.location.hash]);
+    }, [window.location.hash]);*/
 
     const wrapPageInLayout = (component: React.JSX.Element) => {
         return (
@@ -71,7 +72,7 @@ export const App = () => {
     };
     return (
         <ErrorBoundary>
-            <HashRouter>
+            <BrowserRouter>
                 <div className='fullPage'>
                     <Routes>
                         <Route path={PAGE_PATH.HOME} element={wrapPageInLayout(
@@ -147,7 +148,7 @@ export const App = () => {
                     </Routes>
                 </div>
                 <Footer />
-            </HashRouter>
+            </BrowserRouter>
         </ErrorBoundary>
     );
 }
