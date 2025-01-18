@@ -9,7 +9,7 @@ const {
 import { APIGatewayEvent } from 'aws-lambda';
 import { createResponse } from '../utils/lambdaUtils';
 import { IRentalCalculatorData } from '@bpenwell/instantlyanalyze-module';
-import { IRentalReportDatabaseEntry, IUserReportsDatabaseEntry } from '@bpenwell/instantlyanalyze-module/dist/utils/BackendUtils';
+import { IRentalReportDatabaseEntry } from '@bpenwell/instantlyanalyze-module';
 import { USER_ID_INDEX } from '../utils/lambdaConstants';
 import { QueryCommand } from '@aws-sdk/lib-dynamodb';
 
@@ -290,7 +290,7 @@ const getAllRentalReports = async (userId: string) => {
         },
       })
     );
-    const typedItems = Items as IUserReportsDatabaseEntry[];
+    const typedItems = Items as IRentalReportDatabaseEntry[];
 
     if (!typedItems || typedItems.length === 0) {
       console.log(`No reports found for userId: ${userId}`);

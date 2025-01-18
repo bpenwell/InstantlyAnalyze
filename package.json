@@ -5,6 +5,7 @@
   "dependencies": {
     "@auth0/auth0-react": "^2.2.4",
     "@aws-sdk/client-dynamodb": "^3.649.0",
+    "@aws-sdk/client-ses": "^3.731.0",
     "@aws-sdk/lib-dynamodb": "^3.716.0",
     "@bpenwell/instantlyanalyze-components": "file:../InstantlyAnalyze-Components",
     "@bpenwell/instantlyanalyze-layouts": "file:../InstantlyAnalyze-Layouts",

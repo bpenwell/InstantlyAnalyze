@@ -1,19 +1,30 @@
-import { APIGatewayProxyEvent, APIGatewayProxyResult } from 'aws-lambda';
-import { SES } from 'aws-sdk';
+import { APIGatewayEvent, APIGatewayProxyResult } from 'aws-lambda';
+import { SESClient, SendEmailCommand, SendEmailRequest } from '@aws-sdk/client-ses';
+import { createResponse } from '../utils/lambdaUtils';
 
 // Initialize the AWS SES client
-const ses = new SES({ region: process.env.AWS_REGION || 'us-east-2' });
+const sesClient = new SESClient({ region: process.env.AWS_REGION || 'us-east-2' });
 
-// Configure your business email and the "from" email address
-// (Make sure both addresses are verified in your SES configuration)
-const BUSINESS_EMAIL = process.env.BUSINESS_EMAIL || 'business@example.com';
-const FROM_EMAIL = process.env.FROM_EMAIL || 'no-reply@example.com';
+// Configure your email
+const BUSINESS_EMAIL = 'ben@instantlyanalyze.com';
 
 export const handler = async (
-  event: APIGatewayProxyEvent
+  event: APIGatewayEvent | any
 ): Promise<APIGatewayProxyResult> => {
   try {
-    if (event.httpMethod !== 'POST') {
+    // Log the incoming event
+    console.log('Received event:', JSON.stringify(event, null, 2));
+  
+    // Extract the HTTP method from the event
+    const method = event.requestContext?.http?.method;
+    console.log(`HTTP method: ${method}`);
+  
+    // Handle preflight OPTIONS request
+    if (method === 'OPTIONS') {
+      console.log('Preflight OPTIONS request received. Returning 200 with CORS headers.');
+      return createResponse(200, '');
+    }
+    if (method !== 'POST') {
       return {
         statusCode: 405,
         body: JSON.stringify({ message: 'Method Not Allowed' }),
@@ -21,31 +32,26 @@ export const handler = async (
     }
 
     // Parse the request body
-    const { feedbackType, email, note } = JSON.parse(event.body || '{}');
-
-    if (!feedbackType || !note) {
+    const { feedbackType, email, note, userFullName } = JSON.parse(event.body || '{}');
+    if (!feedbackType || !note || !userFullName) {
       return {
         statusCode: 400,
         body: JSON.stringify({
-          message: 'Missing required fields: feedbackType or note',
+          message: 'Missing required fields: feedbackType, note, or userFullName',
         }),
       };
     }
 
     // Build the email subject/content
-    const subject = `New Feedback: ${feedbackType}`;
-    const textBody = `
-Feedback Type: ${feedbackType}
-User Email: ${email || '(not provided)'}
-----------------------------------------
-${note}
-`;
+    const subject = `[Instantly Analyze][User ${feedbackType} Feedback]: User: ${userFullName}`;
+    const textBody = note;
+    
 
     // Construct params for SES
-    const params: SES.SendEmailRequest = {
-      Source: FROM_EMAIL,
+    const params: SendEmailRequest = {
+      Source: BUSINESS_EMAIL, // Sending email (must be verified)
       Destination: {
-        ToAddresses: [BUSINESS_EMAIL],
+        ToAddresses: [BUSINESS_EMAIL], // Receiving email (can be the same)
       },
       Message: {
         Subject: { Data: subject },
@@ -55,10 +61,9 @@ ${note}
       },
     };
 
-    // Attempt to send via AWS SES
-    await ses.sendEmail(params).promise();
+    // Send email via AWS SES
+    await sesClient.send(new SendEmailCommand(params));
 
-    // Return success to the client
     return {
       statusCode: 200,
       body: JSON.stringify({ message: 'Feedback email sent successfully' }),
