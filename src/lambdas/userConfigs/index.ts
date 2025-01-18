@@ -54,11 +54,13 @@ export const handler = async (
   context: Context
 ): Promise<APIGatewayProxyResult> => {
   const method = event.requestContext.http.method;
+  console.log('event: ' + event);
+  console.log('method: ' + method);
   // Handle preflight OPTIONS request
   if (method === 'OPTIONS') {
     console.log('Options request, sending headers');
     // Respond with CORS headers and no body
-    return createResponse(200, '');
+    return createResponse(200, '', true);
   }
 
   try {
@@ -70,7 +72,7 @@ export const handler = async (
 
     if (!userId) {
       console.log('Missing userId in request body');
-      return createResponse(400, { message: 'Missing userId in request body.' });
+      return createResponse(400, { message: 'Missing userId in request body.' }, true);
     }
 
     console.log('User ID:', userId);
@@ -80,16 +82,16 @@ export const handler = async (
       console.log('Fetching user configs');
       try {
         const userConfigs = await getUserConfigs(userId);
-        return createResponse(200, userConfigs);
+        return createResponse(200, userConfigs, true);
       }
       catch (error: any) {
         if (error.message === 'User not found') {
           return createResponse(200, {
             message: 'User not found',
-          });
+          }, true);
         }
         else {
-          throw createResponse(500, error);
+          throw createResponse(500, error, true);
         }
       }
     }
@@ -98,14 +100,14 @@ export const handler = async (
       console.log('Creating user config');
       const newUserConfig = await createUserConfig(userId);
       console.log('New user config created:', newUserConfig);
-      return createResponse(201, newUserConfig);
+      return createResponse(201, newUserConfig, true);
     }
 
     // Handle other routes if needed...
     console.log('Route not found');
-    return createResponse(404, { message: 'Route not found.' });
+    return createResponse(404, { message: 'Route not found.' }, true);
   } catch (error: any) {
     console.error('Internal Server Error:', error);
-    return createResponse(500, { message: 'Internal Server Error', error: error.message });
+    return createResponse(500, { message: 'Internal Server Error', error: error.message }, true);
   }
 };

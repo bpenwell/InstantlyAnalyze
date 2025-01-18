@@ -55,7 +55,7 @@
     "build": "npx tsc",
     "buildLambda": "npm-run-all --parallel buildLambda:* && npm-run-all --parallel postbuild:*",
     "buildLambda:aiRealEstateAgentAPI": "esbuild src/lambdas/aiRealEstateAgentAPI/index.ts --bundle --minify --sourcemap --platform=node --target=node18 --outfile=dist/lambdas/aiRealEstateAgentAPI/index.mjs --external:aws-sdk",
-    "buildLambda:userConfigs": "esbuild src/lambdas/userConfigs/index.ts --bundle --minify --sourcemap --platform=node --target=node18 --outfile=dist/lambdas/userConfigs/index.mjs --external:aws-sdk",
+    "buildLambda:userConfigs": "esbuild src/lambdas/userConfigs/index.ts --bundle --minify --sourcemap --platform=node --target=node18 --outfile=dist/lambdas/userConfigs/index.js --external:aws-sdk",
     "buildLambda:propertyData": "esbuild src/lambdas/propertyData/index.ts --bundle --minify --sourcemap --platform=node --target=node18 --outfile=dist/lambdas/propertyData/index.js --external:aws-sdk",
     "buildLambda:rentEstimate": "esbuild src/lambdas/rentEstimate/index.ts --bundle --minify --sourcemap --platform=node --target=node18 --outfile=dist/lambdas/rentEstimate/index.js --external:aws-sdk",
     "buildLambda:rentalReport": "esbuild src/lambdas/rentalReport/index.ts --bundle --minify --sourcemap --platform=node --target=node18 --outfile=dist/lambdas/rentalReport/index.js --external:aws-sdk",

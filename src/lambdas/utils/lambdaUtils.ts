@@ -127,7 +127,10 @@ export const getHeaders = () => {
 /**
  * Utility: Create an HTTP response
  */
-export const createResponse = (statusCode: number, body: any): APIGatewayProxyResult => {
+export const createResponse = (statusCode: number, body: any, stringifyBody: boolean = false): APIGatewayProxyResult => {
+  if (stringifyBody) {
+    body = JSON.stringify(body);
+  }
   const reponse = {
     statusCode,
     body: body,
