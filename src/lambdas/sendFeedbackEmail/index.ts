@@ -43,7 +43,7 @@ export const handler = async (
     }
 
     // Build the email subject/content
-    const subject = `[Instantly Analyze][User ${feedbackType} Feedback]: User: ${userFullName}`;
+    const subject = `[InstantlyAnalyze][User ${feedbackType} Feedback]: User: ${userFullName}`;
     const textBody = note;
     
 
