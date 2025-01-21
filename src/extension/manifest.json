@@ -43,5 +43,11 @@
       ],
       "matches": ["<all_urls>"]
     }
+  ],
+  "content_scripts": [
+    {
+      "matches": ["*://www.zillow.com/*"],
+      "js": ["contentv2.js"]
+    }
   ]
 }

@@ -95,25 +95,34 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   }
 });
 
-// Open the popup window
 function openPopup() {
   if (isPopupOpen) return;
 
-  chrome.windows.create({
-    url: chrome.runtime.getURL("popup.html"),
-    type: "popup",
-    width: 400,
-    height: 600,
-    left: Math.round((screen.width - 400) / 2),
-    top: Math.round((screen.height - 600) / 2),
-  }, (newWindow) => {
-    isPopupOpen = true;
-    chrome.windows.onRemoved.addListener(function onRemoved(windowId) {
-      if (windowId === newWindow.id) {
-        isPopupOpen = false;
-        notifyPopupClosed();
-        chrome.windows.onRemoved.removeListener(onRemoved);
-      }
+  chrome.windows.getCurrent((currentWindow) => {
+    const screenWidth = currentWindow.width || 800; // Fallback default width
+    const screenHeight = currentWindow.height || 600; // Fallback default height
+
+    const popupWidth = 400;
+    const popupHeight = 600;
+    const left = Math.round((screenWidth - popupWidth) / 2);
+    const top = Math.round((screenHeight - popupHeight) / 2);
+
+    chrome.windows.create({
+      url: chrome.runtime.getURL("popup.html"),
+      type: "popup",
+      width: popupWidth,
+      height: popupHeight,
+      left,
+      top,
+    }, (newWindow) => {
+      isPopupOpen = true;
+      chrome.windows.onRemoved.addListener(function onRemoved(windowId) {
+        if (windowId === newWindow.id) {
+          isPopupOpen = false;
+          notifyPopupClosed();
+          chrome.windows.onRemoved.removeListener(onRemoved);
+        }
+      });
     });
   });
 }

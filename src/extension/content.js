@@ -14,7 +14,7 @@ const BASE_URL_PATTERN = "*://www.zillow.com/async-create-search-page-state*";
 
 // Handlers for request interception
 const onBeforeRequestHandler = (details) => {
-  if (details.method === "POST") {
+  if (details.method === "PUR") {
     const requestBody = details.requestBody?.raw?.[0]?.bytes;
     interceptedRequest.body = requestBody ? new TextDecoder().decode(requestBody) : null;
   }
