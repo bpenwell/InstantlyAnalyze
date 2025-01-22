@@ -1,6 +1,6 @@
-import React, { ReactNode, useEffect } from 'react';
+import React from 'react';
 import './index.css';
-import { BrowserRouter, HashRouter, Route, Routes, useParams } from 'react-router-dom';
+import { BrowserRouter, Route, Routes, useParams } from 'react-router-dom';
 import {
     Footer,
     AuthenticatedPage,
@@ -8,6 +8,7 @@ import {
     AppLayoutPreview,
     AppContextProvider,
     Header,
+    LoadingBar,
 } from '@bpenwell/instantlyanalyze-components';
 import { ContactUs,
     Home,
@@ -26,6 +27,7 @@ import { ContactUs,
     ZillowScraperLandingPage,
     Profile,
     Subscribe,
+    HomeV2,
 } from '@bpenwell/instantlyanalyze-layouts';
 import {
     LOCAL_STORAGE_KEYS,

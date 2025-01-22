@@ -4,24 +4,26 @@ const CopyWebpackPlugin = require('copy-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const { GenerateSW } = require('workbox-webpack-plugin');
 const WebpackPwaManifest = require('webpack-pwa-manifest');
+const CompressionPlugin = require('compression-webpack-plugin');
+const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
 
 module.exports = {
   entry: './src/index.tsx',
   output: {
-    filename: 'bundle.js',
+    // Use hashed filenames for cache-busting
+    filename: '[name].[contenthash].js',
+    chunkFilename: '[name].[contenthash].js',
     path: path.resolve(__dirname, 'dist'),
     publicPath: '/',
   },
-  mode: 'development',
-  devtool: 'source-map',
+  mode: 'production', // Switch to 'production' when you're ready for optimized builds
+  //devtool: 'source-map',
   module: {
     rules: [
       {
         test: /\.(ts|tsx)$/,
         exclude: /node_modules/,
-        include: [
-          path.resolve(__dirname, 'src'),
-        ],
+        include: [path.resolve(__dirname, 'src')],
         use: {
           loader: 'ts-loader',
           options: {
@@ -38,28 +40,68 @@ module.exports = {
         use: [
           'style-loader', // Injects styles into DOM
           'css-loader',   // Translates CSS into CommonJS
-          'sass-loader'   // Compiles Sass to CSS
+          'sass-loader',  // Compiles Sass to CSS
         ],
       },
     ],
   },
+  optimization: {
+    // Enable code splitting & separate runtime bundle
+    splitChunks: {
+      chunks: 'all',               // Split both dynamic and static imports
+      maxSize: 10000000,           // ~10MB (to ensure individual chunks stay below your limit)
+      maxAsyncRequests: 20,
+      maxInitialRequests: 20,
+      cacheGroups: {
+        react: {
+          test: /[\\/]node_modules[\\/](react|react-dom)[\\/]/,
+          name: 'react-vendors',
+          chunks: 'all',
+          priority: 10,
+        },
+        mui: {
+          test: /[\\/]node_modules[\\/]@mui[\\/]/,
+          name: 'mui-vendors',
+          chunks: 'all',
+          priority: 9,
+        },
+        cloudscape: {
+          test: /[\\/]node_modules[\\/]@cloudscape-design[\\/]/,
+          name: 'cloudscape-design-vendors',
+          chunks: 'all',
+          priority: 9,
+        },
+        defaultVendors: {
+          test: /[\\/]node_modules[\\/]/,
+          name: 'vendors',
+          chunks: 'all',
+          priority: -10,
+        },
+      },
+    },
+    runtimeChunk: 'single', // Create a separate bundle for Webpack runtime code
+  },
   plugins: [
     new HtmlWebpackPlugin({
-      template: 'src/index.html', // path to your HTML template
+      template: 'src/index.html',
     }),
     new CopyWebpackPlugin({
       patterns: [
-        { from: 'public', to: 'public' }, // copy the entire 'public' folder
-        { from: 'public/manifest.json', to: 'manifest.json' }, // copy the manifest file
+        { from: 'public', to: 'public' },
+        { from: 'public/manifest.json', to: 'manifest.json' },
       ],
     }),
-    new MiniCssExtractPlugin(),
+    new MiniCssExtractPlugin({
+      filename: '[name].[contenthash].css',
+      chunkFilename: '[name].[contenthash].css',
+    }),
     new WebpackPwaManifest(),
     new GenerateSW({
       maximumFileSizeToCacheInBytes: 10 * 1024 * 1024, // 10 MB
       clientsClaim: true,
       skipWaiting: true,
     }),
+    //new BundleAnalyzerPlugin(),
   ],
   resolve: {
     extensions: ['.ts', '.tsx', '.js', '.jsx'],
@@ -67,7 +109,6 @@ module.exports = {
       '@bpenwell/instantlyanalyze-module': path.resolve(__dirname, 'node_modules/@bpenwell/instantlyanalyze-module'),
       '@bpenwell/instantlyanalyze-components': path.resolve(__dirname, 'node_modules/@bpenwell/instantlyanalyze-components'),
       '@bpenwell/instantlyanalyze-layouts': path.resolve(__dirname, 'node_modules/@bpenwell/instantlyanalyze-layouts'),
-      'react': path.resolve(__dirname, 'node_modules/react'),
       'react': path.resolve(__dirname, 'node_modules/react'),
       'react-dom': path.resolve(__dirname, 'node_modules/react-dom'),
       'react-router-dom': path.resolve(__dirname, 'node_modules/react-router-dom'),
@@ -83,19 +124,18 @@ module.exports = {
       '@mui/icons-material': path.resolve(__dirname, 'node_modules/@mui/icons-material'),
       '@emotion/react': path.resolve(__dirname, 'node_modules/@emotion/react'),
       '@emotion/styled': path.resolve(__dirname, 'node_modules/@emotion/styled'),
-    }
+    },
   },
   devServer: {
     static: path.resolve(__dirname, 'dist'),
     compress: true,
     port: 3000,
     proxy: {
-      // For example, any AJAX call to /create-checkout-session 
-      // will get forwarded to http://localhost:4242
+      // Example proxy for an API endpoint
       '/create-checkout-session': {
         target: 'http://localhost:4242',
-        secure: false
-      }
-    }
+        secure: false,
+      },
+    },
   },
 };
