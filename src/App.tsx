@@ -11,6 +11,7 @@ import {
 } from '@bpenwell/instantlyanalyze-components';
 import { ContactUs,
     Home,
+    HomeV2,
     PageNotFound,
     Dashboard,
     RentalCalculatorCreation,
@@ -76,7 +77,7 @@ export const App = () => {
                 <div className='fullPage'>
                     <Routes>
                         <Route path={PAGE_PATH.HOME} element={wrapPageInLayout(
-                                <Home />
+                                <HomeV2 />
                             )} />
                         <Route path='/product'>
                             <Route path={TOOL_IDS.RENTAL_REPORT}>
@@ -110,9 +111,7 @@ export const App = () => {
                                 }/>
                                 <Route path='view' element={
                                     wrapPageInLayout(
-                                        <AuthenticatedPage>
-                                            <RentalCalculatorViewV3 />
-                                        </AuthenticatedPage>
+                                        <RentalCalculatorViewV3 />
                                     )
                                 }/>
                                 <Route path='view/:id' element={
