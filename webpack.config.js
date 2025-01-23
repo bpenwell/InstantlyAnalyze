@@ -4,7 +4,6 @@ const CopyWebpackPlugin = require('copy-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const { GenerateSW } = require('workbox-webpack-plugin');
 const WebpackPwaManifest = require('webpack-pwa-manifest');
-const CompressionPlugin = require('compression-webpack-plugin');
 const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
 
 module.exports = {

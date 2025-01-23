@@ -2,6 +2,7 @@ import { APIGatewayEvent, APIGatewayProxyResult, Context } from 'aws-lambda';
 import { GetCommand, PutCommand } from '@aws-sdk/lib-dynamodb';
 import { DynamoDBClient } from '@aws-sdk/client-dynamodb';
 import { createResponse } from '../utils/lambdaUtils';
+import { UserStatus } from '@bpenwell/instantlyanalyze-module';
 
 interface IUserConfigs {
   userId: string;
@@ -31,7 +32,7 @@ const getUserConfigs = async (userId: string): Promise<IUserConfigs | null> => {
 const createUserConfig = async (userId: string): Promise<IUserConfigs> => {
   const newUserConfig: IUserConfigs = {
     userId,
-    status: 'free',
+    status: UserStatus.FREE,
     freeReportsAvailable: 5,
   };
 
