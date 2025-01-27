@@ -28,6 +28,7 @@ import { ContactUs,
     Profile,
     Subscribe,
     HomeV2,
+    PrivacyPolicyAndTerms,
 } from '@bpenwell/instantlyanalyze-layouts';
 import {
     LOCAL_STORAGE_KEYS,
@@ -143,6 +144,7 @@ export const App = () => {
                                 </AuthenticatedPage>
                             )
                         } />
+                        <Route path={PAGE_PATH.PRIVACY_POLICY_AND_TERMS} element={wrapPageInLayout(<PrivacyPolicyAndTerms />)} />
                         <Route path='*' element={
                             wrapPageInLayout(
                                 <PageNotFound />
