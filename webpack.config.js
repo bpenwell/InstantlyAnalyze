@@ -10,8 +10,8 @@ module.exports = {
   entry: './src/index.tsx',
   output: {
     // Use hashed filenames for cache-busting
-    filename: '[name].[contenthash].js',
-    chunkFilename: '[name].[contenthash].js',
+    filename: '[name].js',
+    chunkFilename: '[name].js',
     path: path.resolve(__dirname, 'dist'),
     publicPath: '/',
   },
@@ -91,8 +91,8 @@ module.exports = {
       ],
     }),
     new MiniCssExtractPlugin({
-      filename: '[name].[contenthash].css',
-      chunkFilename: '[name].[contenthash].css',
+      filename: '[name].css',
+      chunkFilename: '[name].css',
     }),
     new WebpackPwaManifest(),
     new GenerateSW({
