@@ -6,6 +6,25 @@ const { GenerateSW } = require('workbox-webpack-plugin');
 const WebpackPwaManifest = require('webpack-pwa-manifest');
 const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
 
+//https://www.npmjs.com/package/sitemap-webpack-plugin
+const SitemapPlugin = require('sitemap-webpack-plugin').default;
+const SITE_MAP = [
+  { name: 'home', path: '/' },
+  { name: 'profile', path: '/profile' },
+  { name: 'subscribe', path: '/subscribe' },
+  { name: 'dashboard', path: '/dashboard' },
+  { name: 'rental-calculator-home', path: '/product/rental-report' },
+  { name: 'rental-calculator-edit', path: '/product/rental-report/edit' },
+  { name: 'rental-calculator-create', path: '/product/rental-report/createv3' },
+  { name: 'rental-calculator-view', path: '/product/rental-report/view' },
+  { name: 'market-reports', path: '/product/market-reports' },
+  { name: 'ai-real-estate-agent', path: '/product/ai-real-estate-agent' },
+  { name: 'privacy-policy-and-terms', path: '/privacy-policy-and-terms' },
+  { name: 'mission', path: '/mission' },
+  { name: 'contact-us', path: '/contact-us' },
+  { name: '_404', path: '/404' },
+];
+
 module.exports = {
   entry: './src/index.tsx',
   output: {
@@ -83,9 +102,19 @@ module.exports = {
   plugins: [
     new HtmlWebpackPlugin({
       template: 'src/index.html',
+      title: 'InstantlyAnalyze - AI Real Estate Investment Analysis',
+      meta: {
+        'description': 'Save time and money with AI-powered real estate investment analysis tools.',
+        'og:title': 'InstantlyAnalyze - AI Real Estate Investment Analysis',
+        'og:type': 'website',
+        'og:url': 'https://instantlyanalyze.com',
+        'og:image': 'https://instantlyanalyze.com/public/logo.png',
+        'og:description': 'Save time and money with AI-powered real estate investment analysis tools.'
+      }
     }),
     new CopyWebpackPlugin({
       patterns: [
+        { from: 'src/robots.txt', to: 'robots.txt' },
         { from: 'public', to: 'public' },
         { from: 'public/manifest.json', to: 'manifest.json' },
       ],
@@ -100,6 +129,9 @@ module.exports = {
       clientsClaim: true,
       skipWaiting: true,
     }),
+    new SitemapPlugin({ base: 'https://instantlyanalyze.com', paths: SITE_MAP, options: {
+      filename: '/public/sitemap.xml',
+    }}),
     //new BundleAnalyzerPlugin(),
   ],
   resolve: {

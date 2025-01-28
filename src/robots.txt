@@ -1,0 +1,8 @@
+User-agent: *
+Allow: /
+Disallow: /admin/
+Disallow: /private/
+Disallow: /api/
+
+# Sitemap
+Sitemap: https://instantlyanalyze.com/public/sitemap.xml
