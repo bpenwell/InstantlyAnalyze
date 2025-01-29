@@ -1,17 +1,17 @@
-const { DynamoDBClient } = require('@aws-sdk/client-dynamodb');
-const {
+import { DynamoDBClient } from '@aws-sdk/client-dynamodb';
+import {
   DynamoDBDocumentClient,
   GetCommand,
   PutCommand,
   DeleteCommand,
   UpdateCommand,
-} = require('@aws-sdk/lib-dynamodb');
+  QueryCommand,
+} from '@aws-sdk/lib-dynamodb';
 import { APIGatewayEvent } from 'aws-lambda';
-import { createResponse } from '../utils/lambdaUtils';
-import { IRentalCalculatorData } from '@bpenwell/instantlyanalyze-module';
+import { createResponse, getUserConfigs, updateUserConfigs } from '../utils/lambdaUtils';
+import { IRentalCalculatorData, UserStatus } from '@bpenwell/instantlyanalyze-module';
 import { IRentalReportDatabaseEntry } from '@bpenwell/instantlyanalyze-module';
 import { USER_ID_INDEX } from '../utils/lambdaConstants';
-import { QueryCommand } from '@aws-sdk/lib-dynamodb';
 
 const client = new DynamoDBClient();
 const ddbDocClient = DynamoDBDocumentClient.from(client);
@@ -209,21 +209,37 @@ const saveRentalReport = async (
       console.log('Report updated successfully.');
       return createResponse(200, JSON.stringify({ message: 'Report updated' }));
     }
+    else {
+      console.log('Report does not exist. Creating new report...');
+      const userConfigs = await getUserConfigs(ddbDocClient, userId);
 
-    console.log('Report does not exist. Creating new report...');
-    await ddbDocClient.send(
-      new PutCommand({
-        TableName: TABLE_NAME,
-        Item: {
-          reportId,
-          userId,
-          reportData,
-        },
-      })
-    );
+      if (userConfigs?.status === UserStatus.FREE) {
+        if (!userConfigs?.freeReportsAvailable || userConfigs?.freeReportsAvailable <= 0) {
+          console.warn(`No free reports available for userId: ${userId}`);
+          return createResponse(200, JSON.stringify({ error: 'NoFreeReportsLeftException' }));
+        }
+        else if (userConfigs?.freeReportsAvailable > 0) {
+          updateUserConfigs(ddbDocClient, {
+            ...userConfigs,
+            freeReportsAvailable: userConfigs.freeReportsAvailable - 1,
+          })
+        }
+      }
+      
+      await ddbDocClient.send(
+        new PutCommand({
+          TableName: TABLE_NAME,
+          Item: {
+            reportId,
+            userId,
+            reportData,
+          },
+        })
+      );
 
-    console.log('Report created successfully.');
-    return createResponse(200, JSON.stringify({ message: 'Report created' }));
+      console.log('Report created successfully.');
+      return createResponse(200, JSON.stringify({ message: 'Report created' }));
+    }
   } catch (error) {
     console.error('Error in saveRentalReport:', error);
     return createResponse(500, JSON.stringify({ error: 'Internal Server Error' }));

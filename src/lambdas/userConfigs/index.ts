@@ -1,8 +1,9 @@
 import { APIGatewayEvent, APIGatewayProxyResult, Context } from 'aws-lambda';
-import { GetCommand, PutCommand } from '@aws-sdk/lib-dynamodb';
+import { PutCommand } from '@aws-sdk/lib-dynamodb';
 import { DynamoDBClient } from '@aws-sdk/client-dynamodb';
-import { createResponse } from '../utils/lambdaUtils';
+import { createResponse, getUserConfigs } from '../utils/lambdaUtils';
 import { UserStatus } from '@bpenwell/instantlyanalyze-module';
+import { USER_CONFIGS_TABLE_NAME } from '../utils/lambdaConstants';
 
 interface IUserConfigs {
   userId: string;
@@ -10,24 +11,7 @@ interface IUserConfigs {
   freeReportsAvailable?: number;
 }
 
-const TABLE_NAME = 'UserConfigs';
 const ddbClient = new DynamoDBClient({});
-
-const getUserConfigs = async (userId: string): Promise<IUserConfigs | null> => {
-  const getParams = {
-    TableName: TABLE_NAME,
-    Key: { userId },
-  };
-
-  const getCommand = new GetCommand(getParams);
-  const { Item } = await ddbClient.send(getCommand);
-
-  if (Item) {
-    return Item as IUserConfigs;
-  } else {
-    throw new Error('User not found');
-  }
-};
 
 const createUserConfig = async (userId: string): Promise<IUserConfigs> => {
   const newUserConfig: IUserConfigs = {
@@ -37,7 +21,7 @@ const createUserConfig = async (userId: string): Promise<IUserConfigs> => {
   };
 
   const putParams = {
-    TableName: TABLE_NAME,
+    TableName: USER_CONFIGS_TABLE_NAME,
     Item: newUserConfig,
   };
 
@@ -82,7 +66,7 @@ export const handler = async (
     if (path.includes('getUser')) {
       console.log('Fetching user configs');
       try {
-        const userConfigs = await getUserConfigs(userId);
+        const userConfigs = await getUserConfigs(ddbClient, userId);
         return createResponse(200, userConfigs, true);
       }
       catch (error: any) {

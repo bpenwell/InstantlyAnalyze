@@ -1,7 +1,9 @@
-import { DynamoDB, ReturnValue } from '@aws-sdk/client-dynamodb';
-import { DynamoDBDocument } from '@aws-sdk/lib-dynamodb';
+import { DynamoDB, DynamoDBClient, ReturnValue } from '@aws-sdk/client-dynamodb';
+import { DynamoDBDocument, GetCommand, PutCommand } from '@aws-sdk/lib-dynamodb';
 import { APIGatewayProxyResult } from 'aws-lambda';
 import { addDays, formatISO } from 'date-fns';
+import { USER_CONFIGS_TABLE_NAME } from './lambdaConstants';
+import { IUserConfigs } from '@bpenwell/instantlyanalyze-module';
 
 const dynamo = DynamoDBDocument.from(new DynamoDB());
 
@@ -139,3 +141,30 @@ export const createResponse = (statusCode: number, body: any, stringifyBody: boo
   console.log('Returning ', reponse);
   return reponse;
 }
+
+export const getUserConfigs = async (ddbClient: any, userId: string): Promise<IUserConfigs | null> => {
+  const getParams = {
+    TableName: USER_CONFIGS_TABLE_NAME,
+    Key: { userId },
+  };
+
+  const getCommand = new GetCommand(getParams);
+  const { Item } = await ddbClient.send(getCommand);
+
+  if (Item) {
+    return Item as IUserConfigs;
+  } else {
+    throw new Error('User not found');
+  }
+};
+
+export const updateUserConfigs = async (ddbClient: DynamoDBClient, newUserConfig: IUserConfigs): Promise<boolean | null> => {
+  const putParams = {
+    TableName: USER_CONFIGS_TABLE_NAME,
+    Item: newUserConfig,
+  };
+  
+  const putCommand = new PutCommand(putParams);
+  await ddbClient.send(putCommand);
+  return true;
+};
