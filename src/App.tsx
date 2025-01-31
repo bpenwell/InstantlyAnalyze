@@ -137,7 +137,15 @@ export const App = () => {
                             <Route path={TOOL_IDS.AI_REAL_ESTATE_AGENT} element={wrapPageInLayout(<AIRealEstateAgent />)}/>
                         </Route>
                         <Route path={PAGE_PATH.PROFILE} element={wrapPageInLayout(<Profile />)} />
-                        <Route path={PAGE_PATH.SUBSCRIBE} element={wrapPageInLayout(<Subscribe />)} />
+
+                        <Route path={PAGE_PATH.SUBSCRIBE} element={
+                            wrapPageInLayout(
+                                <AuthenticatedPage>
+                                     <Subscribe />
+                                 </AuthenticatedPage>
+                            )
+                        } />
+
                         <Route path={PAGE_PATH.MISSION} element={wrapPageInLayout(<MissionPage />)} />
                         <Route path={PAGE_PATH.CONTACT_US} element={wrapPageInLayout(<ContactUs />)} />
                         <Route path={PAGE_PATH.DASHBOARD} element={  
