@@ -9,6 +9,9 @@ interface IUserConfigs {
   userId: string;
   status: 'undefined' | 'free' | 'paid' | 'admin';
   freeReportsAvailable?: number;
+  preferences: {
+    tablePageSize?: number;
+  }
 }
 
 const ddbClient = new DynamoDBClient({});
@@ -18,6 +21,9 @@ const createUserConfig = async (userId: string): Promise<IUserConfigs> => {
     userId,
     status: UserStatus.FREE,
     freeReportsAvailable: 5,
+    preferences: {
+      tablePageSize: 10,
+    },
   };
 
   const putParams = {

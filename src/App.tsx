@@ -15,7 +15,6 @@ import {
     PageNotFound,
     Dashboard,
     RentalCalculatorCreation,
-    RentalCalculatorCreationV2,
     RentalCalculatorCreationV3,
     RentalCalculatorHome,
     RentalCalculator,
@@ -96,13 +95,6 @@ export const App = () => {
                                     wrapPageInLayout(
                                         <AuthenticatedPage>
                                             <RentalCalculatorCreation isEditPage={true} />
-                                        </AuthenticatedPage>
-                                    )
-                                }/>
-                                <Route path='createv2' element={
-                                    wrapPageInLayout(
-                                        <AuthenticatedPage>
-                                            <RentalCalculatorCreationV2 />
                                         </AuthenticatedPage>
                                     )
                                 }/>
