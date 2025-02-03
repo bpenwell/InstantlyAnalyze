@@ -1,18 +1,9 @@
 import { APIGatewayEvent, APIGatewayProxyResult, Context } from 'aws-lambda';
 import { PutCommand } from '@aws-sdk/lib-dynamodb';
 import { DynamoDBClient } from '@aws-sdk/client-dynamodb';
-import { createResponse, getUserConfigs } from '../utils/lambdaUtils';
-import { UserStatus } from '@bpenwell/instantlyanalyze-module';
+import { createResponse, getUserConfigs, updateUserConfigs } from '../utils/lambdaUtils';
+import { IUserConfigs, UserStatus } from '@bpenwell/instantlyanalyze-module';
 import { USER_CONFIGS_TABLE_NAME } from '../utils/lambdaConstants';
-
-interface IUserConfigs {
-  userId: string;
-  status: 'undefined' | 'free' | 'paid' | 'admin';
-  freeReportsAvailable?: number;
-  preferences: {
-    tablePageSize?: number;
-  }
-}
 
 const ddbClient = new DynamoDBClient({});
 
@@ -86,8 +77,45 @@ export const handler = async (
         }
       }
     }
-    // POST: /userConfigs/createUser
-    else if (path.includes('createUser')) {
+    if (path.includes('getUser')) {
+      console.log('Fetching user configs');
+      try {
+        const userConfigs = await getUserConfigs(ddbClient, userId);
+        return createResponse(200, userConfigs, true);
+      }
+      catch (error: any) {
+        if (error.message === 'User not found') {
+          return createResponse(200, {
+            message: 'User not found',
+          }, true);
+        }
+        else {
+          throw createResponse(500, error, true);
+        }
+      }
+    } else if (path.includes('updateUser')) {
+      const newUserConfig = body.newUserConfig as IUserConfigs;
+      if (newUserConfig === undefined) {
+        return createResponse(400, { message: 'Missing newUserConfig in request body.' }, true);
+      }
+      console.log(`Updating user config for ${userId} with ${JSON.stringify(newUserConfig)}`);
+      try {
+        await updateUserConfigs(ddbClient, newUserConfig);
+
+        const userConfigs = await getUserConfigs(ddbClient, userId);
+        return createResponse(200, userConfigs, true);
+      }
+      catch (error: any) {
+        if (error.message === 'User not found') {
+          return createResponse(200, {
+            message: 'User not found',
+          }, true);
+        }
+        else {
+          throw createResponse(500, error, true);
+        }
+      }
+    } else if (path.includes('createUser')) {
       console.log('Creating user config');
       const newUserConfig = await createUserConfig(userId);
       console.log('New user config created:', newUserConfig);
