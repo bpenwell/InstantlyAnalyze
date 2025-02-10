@@ -30,6 +30,7 @@ import {
     PrivacyPolicyAndTerms,
     MissionPage,
     ContactUs,
+    ZillowScraperImportPage,
 } from '@bpenwell/instantlyanalyze-layouts';
 import {
     LOCAL_STORAGE_KEYS,
@@ -123,7 +124,14 @@ export const App = () => {
                                 <Route index element={wrapPageInLayout(<RentalCalculatorHome />)} />
                             </Route>
                             <Route path={TOOL_IDS.RENT_ESTIMATOR} element={wrapPageInLayout(<RentEstimatorTool />)}/>
-                            <Route path={TOOL_IDS.MARKET_REPORTS} element={wrapPageInLayout(<ZillowScraperLandingPage />)}/>
+                            <Route path={TOOL_IDS.ZILLOW_SCRAPER}>
+                                <Route path='import' element={
+                                    wrapPageInLayout(
+                                        <ZillowScraperImportPage />
+                                    )
+                                }/>
+                                <Route index element={wrapPageInLayout(<ZillowScraperLandingPage />)} />
+                            </Route>
                             <Route path={TOOL_IDS.BRRRR_CALCULATOR} element={wrapPageInLayout(<BRRRRCalculatorTool />)}/>
                             <Route path={TOOL_IDS.COMPREHENSIVE_PROPERTY_ANALYSIS} element={wrapPageInLayout(<ComprehensivePropertyAnalysis />)}/>
                             <Route path={TOOL_IDS.AI_REAL_ESTATE_AGENT} element={wrapPageInLayout(<AIRealEstateAgent />)}/>

@@ -29,8 +29,8 @@ module.exports = {
   entry: './src/index.tsx',
   output: {
     // Use hashed filenames for cache-busting
-    filename: '[name].js',
-    chunkFilename: '[name].js',
+    filename: '[name].[contenthash].js',
+    chunkFilename: '[name].[contenthash].js',
     path: path.resolve(__dirname, 'dist'),
     publicPath: '/',
   },
