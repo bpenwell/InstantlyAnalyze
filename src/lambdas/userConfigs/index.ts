@@ -2,7 +2,7 @@ import { APIGatewayEvent, APIGatewayProxyResult, Context } from 'aws-lambda';
 import { PutCommand } from '@aws-sdk/lib-dynamodb';
 import { DynamoDBClient } from '@aws-sdk/client-dynamodb';
 import { createResponse, getUserConfigs, updateUserConfigs } from '../utils/lambdaUtils';
-import { IUserConfigs, UserStatus } from '@bpenwell/instantlyanalyze-module';
+import { defaultRentalInputs, IUserConfigs, UserStatus } from '@bpenwell/instantlyanalyze-module';
 import { USER_CONFIGS_TABLE_NAME } from '../utils/lambdaConstants';
 
 const ddbClient = new DynamoDBClient({});
@@ -14,6 +14,7 @@ const createUserConfig = async (userId: string): Promise<IUserConfigs> => {
     freeReportsAvailable: 5,
     preferences: {
       tablePageSize: 10,
+      defaultRentalInputs: defaultRentalInputs,
     },
   };
 

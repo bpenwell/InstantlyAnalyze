@@ -12,6 +12,15 @@ root_path="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 # Navigate to the root directory
 cd "$root_path" || exit
 
+# Function to check if a package directory exists
+check_package_dir() {
+  local package_name=$1
+  if [ ! -d "../$package_name" ]; then
+    echo -e "${RED}Error: Package directory ../$package_name not found. Please ensure all required packages are pulled down.${NC}"
+    exit 1
+  fi
+}
+
 # Function to kill existing processes
 kill_existing_processes() {
   echo -e "${RED}Killing existing processes...${NC}"
@@ -89,17 +98,11 @@ while [[ "$#" -gt 0 ]]; do
   shift
 done
 
-if [ "$server_mode" = true ]; then
-  if [ "$install" = true ] || [ "$clean" = true ] || [ "$cleanNode" = true ] || [ "$prune" = true ] || [ "$auditFix" = true ] || [ "$buildLambda" = true ]; then
-    echo -e "${RED}Error: When using --server, build-related options cannot be used.${NC}"
-    exit 1
-  fi
-fi
-
 # Function to build a Lambda
 build_lambda() {
     local package_name=$1
     echo -e "${MAGENTA}[Build Lambdas][$package_name]${NC}"
+    check_package_dir "$package_name"
     cd "../$package_name" || exit
 
     # Determine if output should be hidden
@@ -118,6 +121,7 @@ build_lambda() {
 build_package() {
     local package_name=$1
     echo -e "${MAGENTA}[Build][$package_name]${NC}"
+    check_package_dir "$package_name"
     cd "../$package_name" || exit
 
     # Determine if output should be hidden
@@ -166,6 +170,7 @@ build_package() {
 server_package() {
     local package_name=$1
     echo -e "${MAGENTA}[Server][$package_name]${NC}"
+    check_package_dir "$package_name"
     cd "../$package_name" || exit
 
     # Determine if output should be hidden
@@ -184,6 +189,8 @@ build_all_packages() {
     build_package "InstantlyAnalyze-Module"
     build_package "InstantlyAnalyze-Components"
     build_package "InstantlyAnalyze-Layouts"
+    # Target packages
+    build_package "InstantlyAnalyze-ZillowScraper" &
     build_package "InstantlyAnalyze"
 }
 
@@ -193,6 +200,7 @@ start_all_servers() {
     server_package "InstantlyAnalyze-Module" & 
     server_package "InstantlyAnalyze-Components" & 
     server_package "InstantlyAnalyze-Layouts" &
+    server_package "InstantlyAnalyze-ZillowScraper" &
     server_package "InstantlyAnalyze" &
 }
 
@@ -210,7 +218,7 @@ if [ "$server_mode" = true ]; then
 
     # Run the start command and handle errors
     echo -e "${GREEN}Running npm run start...${NC}"
-    eval "npm run start $output_redirect" || { echo -e "${RED}Error: Failed to run npm run start${NC}"; true; }
+    eval "npm run start $output_redirect" || { echo -e "${RED}Error: Failed to run npm run start${NC}"; exit 1; }
 
 else
     # Default Mode: Build all packages
@@ -236,5 +244,5 @@ else
 
     # Run the start command and handle errors
     echo -e "${GREEN}Running npm run start...${NC}"
-    eval "npm run start $output_redirect" || { echo -e "${RED}Error: Failed to run npm run start${NC}"; true; }
+    eval "npm run start $output_redirect" || { echo -e "${RED}Error: Failed to run npm run start${NC}"; exit 1; }
 fi
