@@ -59,6 +59,7 @@ export const App = () => {
         return (
             <AppContextProvider>
                 <Header />
+                {/* */}
                 <AppLayoutPreview children={component}/>
             </AppContextProvider>
         );
@@ -140,9 +141,7 @@ export const App = () => {
 
                         <Route path={PAGE_PATH.SUBSCRIBE} element={
                             wrapPageInLayout(
-                                <AuthenticatedPage>
-                                     <Subscribe />
-                                 </AuthenticatedPage>
+                                <Subscribe />
                             )
                         } />
 
