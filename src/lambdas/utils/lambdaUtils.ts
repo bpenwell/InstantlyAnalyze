@@ -71,7 +71,7 @@ export const checkAndUpdateApiUsage = async (TableName: string, apiName: string,
   console.log(`Checking and updating API usage for ${apiName}`);
   const currentCallsThisMonth = await getApiUsageCount(TableName, apiName);
   if (currentCallsThisMonth + incrementBy > maxApiCallsPerMonth) {
-    throw new Error('API limit exceeded');
+    throw new Error(`API limit for data source ${apiName} exceeded. Use "Contact Us" page to have website owner fix the issue.`);
   }
   const params = {
     TableName,

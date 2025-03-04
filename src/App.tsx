@@ -31,17 +31,19 @@ import {
     MissionPage,
     ContactUs,
     ZillowScraperImportPage,
+    SubscribeOutcome,
 } from '@bpenwell/instantlyanalyze-layouts';
 import {
-    LOCAL_STORAGE_KEYS,
     TOOL_IDS,
-    useLocalStorage,
     PAGE_PATH,
+    LOCAL_STORAGE_KEYS,
+    useLocalStorage,
 } from '@bpenwell/instantlyanalyze-module';
 import { applyMode, applyDensity, Density, Mode } from '@cloudscape-design/global-styles';
+import { useAuth0 } from '@auth0/auth0-react';
 
 export const App = () => {
-
+    const auth0 = useAuth0();
     // apply global css settings
     const [appMode] = useLocalStorage<Mode>(LOCAL_STORAGE_KEYS.APP_MODE);
     const [appDensity] = useLocalStorage<Density>(LOCAL_STORAGE_KEYS.APP_DENSITY);
@@ -89,14 +91,14 @@ export const App = () => {
                                 <Route path='create' element={
                                     wrapPageInLayout(
                                         <AuthenticatedPage>
-                                            <RentalCalculatorCreation />
+                                            <RentalCalculatorCreation auth0={auth0} />
                                         </AuthenticatedPage>
                                     )
                                 }/>
                                 <Route path='edit/:id' element={
                                     wrapPageInLayout(
                                         <AuthenticatedPage>
-                                            <RentalCalculatorCreation isEditPage={true} />
+                                            <RentalCalculatorCreation auth0={auth0} isEditPage={true} />
                                         </AuthenticatedPage>
                                     )
                                 }/>
@@ -142,6 +144,11 @@ export const App = () => {
                         <Route path={PAGE_PATH.SUBSCRIBE} element={
                             wrapPageInLayout(
                                 <Subscribe />
+                            )
+                        } />
+                        <Route path={PAGE_PATH.SUBSCRIBE_OUTCOME} element={
+                            wrapPageInLayout(
+                                <SubscribeOutcome />
                             )
                         } />
 

@@ -213,7 +213,7 @@ const saveRentalReport = async (
       console.log('Report does not exist. Creating new report...');
       const userConfigs = await getUserConfigs(ddbDocClient, userId);
 
-      if (userConfigs?.status === UserStatus.FREE) {
+      if (userConfigs?.subscription.status === UserStatus.FREE) {
         if (!userConfigs?.freeReportsAvailable || userConfigs?.freeReportsAvailable <= 0) {
           console.warn(`No free reports available for userId: ${userId}`);
           return createResponse(200, JSON.stringify({ error: 'NoFreeReportsLeftException' }));

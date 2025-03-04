@@ -10,7 +10,10 @@ const ddbClient = new DynamoDBClient({});
 const createUserConfig = async (userId: string): Promise<IUserConfigs> => {
   const newUserConfig: IUserConfigs = {
     userId,
-    status: UserStatus.FREE,
+    subscription: {
+      status: UserStatus.FREE,
+    },
+    freeZillowScrapesAvailable: 1,
     freeReportsAvailable: 5,
     preferences: {
       tablePageSize: 10,
