@@ -8,9 +8,9 @@ import {
     AppLayoutPreview,
     Header,
     LoadingBar,
-    useLocalStorage,
-    LOCAL_STORAGE_KEYS,
     useAppContext,
+    LOCAL_STORAGE_KEYS,
+    useLocalStorage,
 } from '@bpenwell/instantlyanalyze-components';
 import {
     Home,
@@ -38,8 +38,6 @@ import {
 import {
     TOOL_IDS,
     PAGE_PATH,
-    LOCAL_STORAGE_KEYS,
-    useLocalStorage,
 } from '@bpenwell/instantlyanalyze-module';
 import { applyMode, applyDensity, Density, Mode } from '@cloudscape-design/global-styles';
 import { useAuth0 } from '@auth0/auth0-react';
@@ -50,9 +48,7 @@ export const App = () => {
     const { getAppDensity, getAppMode } = useAppContext();
     applyDensity(getAppDensity());
     const appMode = getAppMode();
-    console.log('appMode root 1', appMode);
     useEffect(() => {
-        console.log('appMode root 2', appMode);
         applyMode(appMode);
     }, [appMode])
 
