@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import './index.css';
 import { BrowserRouter, Route, Routes, useParams } from 'react-router-dom';
 import {
@@ -6,9 +6,11 @@ import {
     AuthenticatedPage,
     ErrorBoundary,
     AppLayoutPreview,
-    AppContextProvider,
     Header,
     LoadingBar,
+    useLocalStorage,
+    LOCAL_STORAGE_KEYS,
+    useAppContext,
 } from '@bpenwell/instantlyanalyze-components';
 import {
     Home,
@@ -33,34 +35,28 @@ import {
     ZillowScraperImportPage,
 } from '@bpenwell/instantlyanalyze-layouts';
 import {
-    LOCAL_STORAGE_KEYS,
     TOOL_IDS,
-    useLocalStorage,
     PAGE_PATH,
 } from '@bpenwell/instantlyanalyze-module';
 import { applyMode, applyDensity, Density, Mode } from '@cloudscape-design/global-styles';
 
 export const App = () => {
-
     // apply global css settings
-    const [appMode] = useLocalStorage<Mode>(LOCAL_STORAGE_KEYS.APP_MODE);
-    const [appDensity] = useLocalStorage<Density>(LOCAL_STORAGE_KEYS.APP_DENSITY);
-    applyMode(appMode);
-    applyDensity(appDensity);
-
-    //Only for hash router
-    /*useEffect(() => {
-        if (!window.location.hash.includes('#/')) {
-            window.location.hash = `#/${window.location.hash}`
-        }
-    }, [window.location.hash]);*/
+    const { getAppDensity, getAppMode } = useAppContext();
+    applyDensity(getAppDensity());
+    const appMode = getAppMode();
+    console.log('appMode root 1', appMode);
+    useEffect(() => {
+        console.log('appMode root 2', appMode);
+        applyMode(appMode);
+    }, [appMode])
 
     const wrapPageInLayout = (component: React.JSX.Element) => {
         return (
-            <AppContextProvider>
+            <>
                 <Header />
                 <AppLayoutPreview children={component}/>
-            </AppContextProvider>
+            </>
         );
     }
     const smartAuthComponent = (component: React.JSX.Element) => {
