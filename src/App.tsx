@@ -9,8 +9,6 @@ import {
     Header,
     LoadingBar,
     useAppContext,
-    LOCAL_STORAGE_KEYS,
-    useLocalStorage,
 } from '@bpenwell/instantlyanalyze-components';
 import {
     Home,
