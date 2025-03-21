@@ -40,7 +40,7 @@ exports.handler = async (event: APIGatewayEvent | any) => {
     return createResponse(400, JSON.stringify({ error: 'Invalid JSON input' }));
   }
 
-  const { action, reportId, userId = undefined, reportData } = bodyJson;
+  const { action, reportId, userId = undefined, reportData, savingExistingReport = false } = bodyJson;
   console.log(`Action: ${action}, ReportID: ${reportId}, UserID: ${userId}`);
 
   // Convert the reportData to the correct type
@@ -52,7 +52,7 @@ exports.handler = async (event: APIGatewayEvent | any) => {
     case 'getRentalReport':
       return await getRentalReport(reportId, userId);
     case 'saveRentalReport':
-      return await saveRentalReport(reportId, userId, typedReportData);
+      return await saveRentalReport(reportId, userId, typedReportData, savingExistingReport);
     case 'deleteRentalReport':
       return await deleteRentalReport(reportId, userId);
     case 'getAllRentalReports':
@@ -164,7 +164,8 @@ const getRentalReport = async (reportId: string, userId: string) => {
 const saveRentalReport = async (
   reportId: string,
   userId: string,
-  reportData: IRentalCalculatorData
+  reportData: IRentalCalculatorData,
+  savingExistingReport: boolean
 ) => {
   console.log('saveRentalReport called with:', {
     reportId,
@@ -218,7 +219,7 @@ const saveRentalReport = async (
           console.warn(`No free reports available for userId: ${userId}`);
           return createResponse(200, JSON.stringify({ error: 'NoFreeReportsLeftException' }));
         }
-        else if (userConfigs?.freeReportsAvailable > 0) {
+        else if (userConfigs?.freeReportsAvailable > 0 && !savingExistingReport) {
           updateUserConfigs(ddbDocClient, {
             ...userConfigs,
             freeReportsAvailable: userConfigs.freeReportsAvailable - 1,
