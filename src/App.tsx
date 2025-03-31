@@ -81,13 +81,6 @@ export const App = () => {
                             )} />
                         <Route path='/product'>
                             <Route path={TOOL_IDS.RENTAL_REPORT}>
-                                <Route path='create' element={
-                                    wrapPageInLayout(
-                                        <AuthenticatedPage>
-                                            <RentalCalculatorCreation auth0={auth0} />
-                                        </AuthenticatedPage>
-                                    )
-                                }/>
                                 <Route path='edit/:id' element={
                                     wrapPageInLayout(
                                         <AuthenticatedPage>
