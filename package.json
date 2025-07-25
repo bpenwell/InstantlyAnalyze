@@ -1,5 +1,5 @@
 {
-  "name": "@bpenwell/instantlyanalyze",
+  "name": "@ben1000240/instantlyanalyze",
   "version": "0.1.0",
   "private": true,
   "packageManager": "npm@10.0.0",
@@ -27,8 +27,8 @@
     "@emotion/react": "^11.0.0",
     "@emotion/styled": "^11.0.0",
     "@mapbox/search-js-react": "^1.0.0-beta.22",
-    "@mui/icons-material": "^6.0.0",
-    "@mui/material": "^6.0.0",
+    "@mui/icons-material": "^6.5.0",
+    "@mui/material": "^6.5.0",
     "@types/jest": "^29.5.11",
     "@types/node": "^20.11.6",
     "@types/react": "^18.2.48",
@@ -45,9 +45,9 @@
     "node-fetch": "^3.3.2",
     "npm-run-all": "^4.1.5",
     "openai": "^4.54.0",
-    "react": "^18.0.0",
+    "react": "^18.3.1",
     "react-chartjs-2": "^4.2.0",
-    "react-dom": "^18.0.0",
+    "react-dom": "^18.3.1",
     "react-router-dom": "^6.25.1",
     "react-scripts": "5.0.1",
     "stripe": "^17.5.0",
@@ -57,7 +57,7 @@
   },
   "scripts": {
     "dev": "turbo run dev --parallel",
-    "build": "turbo run build --filter=@bpenwell/instantlyanalyze-module --filter=@bpenwell/instantlyanalyze-components --filter=@bpenwell/instantlyanalyze-layouts && npx tsc",
+    "build": "turbo run build --filter=@ben1000240/instantlyanalyze-module --filter=@ben1000240/instantlyanalyze-components --filter=@ben1000240/instantlyanalyze-layouts && npx tsc",
     "test": "turbo run test",
     "lint": "eslint .",
     "clean": "turbo run clean",
@@ -90,7 +90,10 @@
     "publish:major": "node scripts/publish-packages.js major",
     "publish:all": "npm run publish:patch",
     "migrate:npm": "node scripts/migrate-to-npm.js migrate",
-    "migrate:rollback": "node scripts/migrate-to-npm.js rollback"
+    "migrate:rollback": "node scripts/migrate-to-npm.js rollback",
+    "import:auto": "node scripts/smart-import.js auto",
+    "import:local": "node scripts/smart-import.js local",
+    "import:published": "node scripts/smart-import.js published"
   },
   "eslintConfig": {
     "extends": [

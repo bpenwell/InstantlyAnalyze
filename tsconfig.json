@@ -20,9 +20,9 @@
     "sourceMap": true,
     "baseUrl": ".",
     "paths": {
-      "@bpenwell/instantlyanalyze-module": ["../InstantlyAnalyze-Module/src"],
-      "@bpenwell/instantlyanalyze-components": ["../InstantlyAnalyze-Components/src"],
-      "@bpenwell/instantlyanalyze-layouts": ["../InstantlyAnalyze-Layouts/src"]
+      "@ben1000240/instantlyanalyze-module": ["../InstantlyAnalyze-Module/src"],
+      "@ben1000240/instantlyanalyze-components": ["../InstantlyAnalyze-Components/src"],
+      "@ben1000240/instantlyanalyze-layouts": ["../InstantlyAnalyze-Layouts/src"]
     }
   },
   "include": ["src/"],

@@ -137,9 +137,9 @@ module.exports = {
   resolve: {
     extensions: ['.ts', '.tsx', '.js', '.jsx'],
     alias: {
-      '@bpenwell/instantlyanalyze-module': path.resolve(__dirname, 'node_modules/@bpenwell/instantlyanalyze-module'),
-      '@bpenwell/instantlyanalyze-components': path.resolve(__dirname, 'node_modules/@bpenwell/instantlyanalyze-components'),
-      '@bpenwell/instantlyanalyze-layouts': path.resolve(__dirname, 'node_modules/@bpenwell/instantlyanalyze-layouts'),
+      '@ben1000240/instantlyanalyze-module': path.resolve(__dirname, 'node_modules/@ben1000240/instantlyanalyze-module'),
+      '@ben1000240/instantlyanalyze-components': path.resolve(__dirname, 'node_modules/@ben1000240/instantlyanalyze-components'),
+      '@ben1000240/instantlyanalyze-layouts': path.resolve(__dirname, 'node_modules/@ben1000240/instantlyanalyze-layouts'),
       'react': path.resolve(__dirname, 'node_modules/react'),
       'react-dom': path.resolve(__dirname, 'node_modules/react-dom'),
       'react-router-dom': path.resolve(__dirname, 'node_modules/react-router-dom'),

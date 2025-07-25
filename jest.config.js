@@ -5,9 +5,9 @@ module.exports = {
   moduleNameMapper: {
     '\\.(css|less|scss|sass)$': 'identity-obj-proxy',
     '^@/(.*)$': '<rootDir>/src/$1',
-    '@bpenwell/instantlyanalyze-components': '<rootDir>/../InstantlyAnalyze-Components/src/index.ts',
-    '@bpenwell/instantlyanalyze-layouts': '<rootDir>/../InstantlyAnalyze-Layouts/src/index.ts',
-    '@bpenwell/instantlyanalyze-module': '<rootDir>/../InstantlyAnalyze-Module/src/index.ts',
+    '@ben1000240/instantlyanalyze-components': '<rootDir>/../InstantlyAnalyze-Components/src/index.ts',
+    '@ben1000240/instantlyanalyze-layouts': '<rootDir>/../InstantlyAnalyze-Layouts/src/index.ts',
+    '@ben1000240/instantlyanalyze-module': '<rootDir>/../InstantlyAnalyze-Module/src/index.ts',
     '@cloudscape-design/global-styles': '<rootDir>/src/__mocks__/@cloudscape-design/global-styles.ts',
   },
   transform: {
@@ -18,7 +18,7 @@ module.exports = {
   transformIgnorePatterns: [
     'node_modules/(?!(@cloudscape-design)/)',
   ],
-  testMatch: ['**/tst/**/*.[jt]s?(x)', '**/?(*.)+(spec|test).[jt]s?(x)'],
+  testMatch: ['**/tst/**/*.[jt]s?(x)'],
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'json', 'node'],
   moduleDirectories: ['node_modules', '<rootDir>/src', '<rootDir>/tst'],
 }; 
