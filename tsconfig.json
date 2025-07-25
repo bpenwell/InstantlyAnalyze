@@ -17,7 +17,13 @@
     "declaration": true,
     "declarationDir": "dist",
     "outDir": "dist",  // Ensure your compiled files are outputted here
-    "sourceMap": true
+    "sourceMap": true,
+    "baseUrl": ".",
+    "paths": {
+      "@bpenwell/instantlyanalyze-module": ["../InstantlyAnalyze-Module/src"],
+      "@bpenwell/instantlyanalyze-components": ["../InstantlyAnalyze-Components/src"],
+      "@bpenwell/instantlyanalyze-layouts": ["../InstantlyAnalyze-Layouts/src"]
+    }
   },
   "include": ["src/"],
   "exclude": ["node_modules"]

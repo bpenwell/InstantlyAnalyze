@@ -1,0 +1,23 @@
+import React from 'react';
+
+export const Home = () => <div data-testid="home">Home</div>;
+export const PageNotFound = () => <div>404</div>;
+export const Dashboard = () => <div>Dashboard</div>;
+export const RentalCalculatorCreation = () => <div>Calculator Creation</div>;
+export const RentalCalculatorCreationV3 = () => <div>Calculator Creation V3</div>;
+export const RentalCalculatorHome = () => <div>Calculator Home</div>;
+export const RentalCalculator = () => <div>Calculator</div>;
+export const RentEstimatorTool = () => <div>Rent Estimator</div>;
+export const BRRRRCalculatorTool = () => <div>BRRRR Calculator</div>;
+export const ComprehensivePropertyAnalysis = () => <div>Property Analysis</div>;
+export const AIRealEstateAgent = () => <div>AI Agent</div>;
+export const RentalCalculatorViewV3 = () => <div>Calculator View V3</div>;
+export const ZillowScraperLandingPage = () => <div>Zillow Scraper</div>;
+export const Profile = () => <div>Profile</div>;
+export const Subscribe = () => <div>Subscribe</div>;
+export const HomeV2 = () => <div>Home V2</div>;
+export const PrivacyPolicyAndTerms = () => <div>Privacy Policy</div>;
+export const MissionPage = () => <div>Mission</div>;
+export const ContactUs = () => <div>Contact</div>;
+export const ZillowScraperImportPage = () => <div>Zillow Import</div>;
+export const SubscribeOutcome = () => <div>Subscribe Outcome</div>; 
