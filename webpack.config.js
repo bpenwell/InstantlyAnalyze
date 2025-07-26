@@ -28,14 +28,14 @@ const SITE_MAP = [
 module.exports = {
   entry: './src/index.tsx',
   output: {
-    // Use hashed filenames for cache-busting
-    filename: '[name].[contenthash].js',
-    chunkFilename: '[name].[contenthash].js',
+    // Use hashed filenames for cache-busting in production, simple names in development
+    filename: process.env.NODE_ENV === 'production' ? '[name].[contenthash].js' : '[name].js',
+    chunkFilename: process.env.NODE_ENV === 'production' ? '[name].[contenthash].js' : '[name].js',
     path: path.resolve(__dirname, 'dist'),
     publicPath: '/',
   },
-  mode: 'production', // Switch to 'production' when you're ready for optimized builds
-  //devtool: 'source-map',
+  mode: process.env.NODE_ENV === 'production' ? 'production' : 'development',
+  devtool: process.env.NODE_ENV === 'production' ? false : 'source-map',
   module: {
     rules: [
       {
@@ -49,6 +49,7 @@ module.exports = {
           },
         },
       },
+
       {
         test: /\.css$/i,
         use: ['style-loader', 'css-loader', 'postcss-loader'],
@@ -125,7 +126,7 @@ module.exports = {
     }),
     new WebpackPwaManifest(),
     new GenerateSW({
-      maximumFileSizeToCacheInBytes: 10 * 1024 * 1024, // 10 MB
+      maximumFileSizeToCacheInBytes: 20 * 1024 * 1024, // 20 MB
       clientsClaim: true,
       skipWaiting: true,
     }),
@@ -136,6 +137,7 @@ module.exports = {
   ],
   resolve: {
     extensions: ['.ts', '.tsx', '.js', '.jsx'],
+    modules: [path.resolve(__dirname, 'node_modules'), 'node_modules'],
     alias: {
       '@ben1000240/instantlyanalyze-module': path.resolve(__dirname, 'node_modules/@ben1000240/instantlyanalyze-module'),
       '@ben1000240/instantlyanalyze-components': path.resolve(__dirname, 'node_modules/@ben1000240/instantlyanalyze-components'),
