@@ -3,7 +3,7 @@ import { DynamoDBDocument, GetCommand, PutCommand } from '@aws-sdk/lib-dynamodb'
 import { APIGatewayProxyResult } from 'aws-lambda';
 import { addDays, formatISO } from 'date-fns';
 import { USER_CONFIGS_TABLE_NAME } from './lambdaConstants';
-import { IUserConfigs } from '@ben1000240/instantlyanalyze-module';
+import type { IUserConfigs } from '@bpenwell/instantlyanalyze-module';
 
 const dynamo = DynamoDBDocument.from(new DynamoDB());
 

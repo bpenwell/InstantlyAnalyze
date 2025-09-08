@@ -2,7 +2,8 @@ import { APIGatewayEvent, APIGatewayProxyResult, Context } from 'aws-lambda';
 import { PutCommand } from '@aws-sdk/lib-dynamodb';
 import { DynamoDBClient } from '@aws-sdk/client-dynamodb';
 import { createResponse, getUserConfigs, updateUserConfigs } from '../utils/lambdaUtils';
-import { defaultRentalInputs, IUserConfigs, UserStatus } from '@ben1000240/instantlyanalyze-module';
+import { defaultRentalInputs, UserStatus } from '@bpenwell/instantlyanalyze-module';
+import type { IUserConfigs } from '@bpenwell/instantlyanalyze-module';
 import { USER_CONFIGS_TABLE_NAME } from '../utils/lambdaConstants';
 
 const ddbClient = new DynamoDBClient({});

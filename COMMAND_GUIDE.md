@@ -19,9 +19,9 @@ cd C:\Users\benpe\Coding\REI-Project\InstantlyAnalyze
 npm run build
 
 # Build specific packages
-npx turbo run build --filter=@ben1000240/instantlyanalyze-module
-npx turbo run build --filter=@ben1000240/instantlyanalyze-components
-npx turbo run build --filter=@ben1000240/instantlyanalyze-layouts
+npx turbo run build --filter=@bpenwell/instantlyanalyze-module
+npx turbo run build --filter=@bpenwell/instantlyanalyze-components
+npx turbo run build --filter=@bpenwell/instantlyanalyze-layouts
 
 # Force rebuild (ignore cache)
 npx turbo run build --force
@@ -36,8 +36,8 @@ npx turbo run build --parallel
 npm run dev
 
 # Start development for specific packages
-npx turbo run dev --filter=@ben1000240/instantlyanalyze-module
-npx turbo run dev --filter=@ben1000240/instantlyanalyze-components
+npx turbo run dev --filter=@bpenwell/instantlyanalyze-module
+npx turbo run dev --filter=@bpenwell/instantlyanalyze-components
 
 # Watch mode for all packages
 npx turbo run dev --parallel
@@ -49,7 +49,7 @@ npx turbo run dev --parallel
 npm run test
 
 # Run tests for specific packages
-npx turbo run test --filter=@ben1000240/instantlyanalyze-module
+npx turbo run test --filter=@bpenwell/instantlyanalyze-module
 
 # Run tests in watch mode
 npx turbo run test --watch
@@ -64,7 +64,7 @@ npx turbo run test --coverage
 npm run lint
 
 # Lint specific packages
-npx turbo run lint --filter=@ben1000240/instantlyanalyze-components
+npx turbo run lint --filter=@bpenwell/instantlyanalyze-components
 
 # Fix linting issues
 npx turbo run lint --fix
@@ -76,7 +76,7 @@ npx turbo run lint --fix
 npm run type-check
 
 # Type check specific packages
-npx turbo run type-check --filter=@ben1000240/instantlyanalyze-module
+npx turbo run type-check --filter=@bpenwell/instantlyanalyze-module
 ```
 
 ### **Clean Commands**
@@ -85,7 +85,7 @@ npx turbo run type-check --filter=@ben1000240/instantlyanalyze-module
 npm run clean
 
 # Clean specific packages
-npx turbo run clean --filter=@ben1000240/instantlyanalyze-module
+npx turbo run clean --filter=@bpenwell/instantlyanalyze-module
 ```
 
 ## 📦 **Publishing Commands**
@@ -339,10 +339,10 @@ npx turbo run build --filter=...[origin/main]
 npx turbo run build --filter=...[origin/main]
 
 # Run tasks for specific packages and their dependencies
-npx turbo run build --filter=@ben1000240/instantlyanalyze-layouts...
+npx turbo run build --filter=@bpenwell/instantlyanalyze-layouts...
 
 # Run tasks for packages that depend on a specific package
-npx turbo run build --filter=...@ben1000240/instantlyanalyze-module
+npx turbo run build --filter=...@bpenwell/instantlyanalyze-module
 ```
 
 ### **Output Control**

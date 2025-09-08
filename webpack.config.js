@@ -35,7 +35,7 @@ module.exports = {
     publicPath: '/',
   },
   mode: process.env.NODE_ENV === 'production' ? 'production' : 'development',
-  devtool: process.env.NODE_ENV === 'production' ? false : 'source-map',
+  devtool: 'source-map',
   module: {
     rules: [
       {
@@ -65,6 +65,8 @@ module.exports = {
     ],
   },
   optimization: {
+    // Disable minification for debugging
+    minimize: false,
     // Enable code splitting & separate runtime bundle
     splitChunks: {
       chunks: 'all',               // Split both dynamic and static imports
@@ -137,11 +139,12 @@ module.exports = {
   ],
   resolve: {
     extensions: ['.ts', '.tsx', '.js', '.jsx'],
+    mainFields: ['browser', 'module', 'main'],
     modules: [path.resolve(__dirname, 'node_modules'), 'node_modules'],
     alias: {
-      '@ben1000240/instantlyanalyze-module': path.resolve(__dirname, 'node_modules/@ben1000240/instantlyanalyze-module'),
-      '@ben1000240/instantlyanalyze-components': path.resolve(__dirname, 'node_modules/@ben1000240/instantlyanalyze-components'),
-      '@ben1000240/instantlyanalyze-layouts': path.resolve(__dirname, 'node_modules/@ben1000240/instantlyanalyze-layouts'),
+      '@bpenwell/instantlyanalyze-module': path.resolve(__dirname, '../InstantlyAnalyze-Module/dist'),
+      '@bpenwell/instantlyanalyze-components': path.resolve(__dirname, '../InstantlyAnalyze-Components/dist'),
+      '@bpenwell/instantlyanalyze-layouts': path.resolve(__dirname, '../InstantlyAnalyze-Layouts/dist'),
       'react': path.resolve(__dirname, 'node_modules/react'),
       'react-dom': path.resolve(__dirname, 'node_modules/react-dom'),
       'react-router-dom': path.resolve(__dirname, 'node_modules/react-router-dom'),
@@ -153,10 +156,11 @@ module.exports = {
       '@cloudscape-design/collection-hooks': path.resolve(__dirname, 'node_modules/@cloudscape-design/collection-hooks'),
       '@cloudscape-design/board-components': path.resolve(__dirname, 'node_modules/@cloudscape-design/board-components'),
       '@cloudscape-design/global-styles': path.resolve(__dirname, 'node_modules/@cloudscape-design/global-styles'),
-      '@mui/material': path.resolve(__dirname, 'node_modules/@mui/material'),
+      /*'@mui/material': path.resolve(__dirname, 'node_modules/@mui/material'),
       '@mui/icons-material': path.resolve(__dirname, 'node_modules/@mui/icons-material'),
-      '@emotion/react': path.resolve(__dirname, 'node_modules/@emotion/react'),
-      '@emotion/styled': path.resolve(__dirname, 'node_modules/@emotion/styled'),
+      '@mui/styled-engine': path.resolve(__dirname, 'node_modules/@mui/styled-engine'),*/
+      /*'@emotion/react': path.resolve(__dirname, 'node_modules/@emotion/react'),
+      '@emotion/styled': path.resolve(__dirname, 'node_modules/@emotion/styled'),*/
     },
   },
   devServer: {

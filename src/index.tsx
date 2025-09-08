@@ -2,11 +2,11 @@ import './index.css';
 import reportWebVitals from './reportWebVitals';
 import { App } from './App';
 import { createRoot } from 'react-dom/client';
-import { auth0Props } from '@ben1000240/instantlyanalyze-module';
+import { auth0Props } from '@bpenwell/instantlyanalyze-module';
 import { Auth0Provider } from '@auth0/auth0-react';
 import '@cloudscape-design/global-styles/index.css'; // Correct import path
 import '@cloudscape-design/design-tokens/index.scss';
-import { AppContextProvider } from '@ben1000240/instantlyanalyze-components';
+import { AppContextProvider } from '@bpenwell/instantlyanalyze-components';
 
 const container = document.getElementById('root');
 const root = createRoot(container!);

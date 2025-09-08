@@ -17,13 +17,7 @@
     "declaration": true,
     "declarationDir": "dist",
     "outDir": "dist",  // Ensure your compiled files are outputted here
-    "sourceMap": true,
-    "baseUrl": ".",
-    "paths": {
-      "@ben1000240/instantlyanalyze-module": ["../InstantlyAnalyze-Module/src"],
-      "@ben1000240/instantlyanalyze-components": ["../InstantlyAnalyze-Components/src"],
-      "@ben1000240/instantlyanalyze-layouts": ["../InstantlyAnalyze-Layouts/src"]
-    }
+    "sourceMap": true
   },
   "include": ["src/"],
   "exclude": ["node_modules"]

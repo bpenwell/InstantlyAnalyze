@@ -9,8 +9,9 @@ import {
 } from '@aws-sdk/lib-dynamodb';
 import { APIGatewayEvent } from 'aws-lambda';
 import { createResponse, getUserConfigs, updateUserConfigs } from '../utils/lambdaUtils';
-import { IRentalCalculatorData, UserStatus } from '@ben1000240/instantlyanalyze-module';
-import { IRentalReportDatabaseEntry } from '@ben1000240/instantlyanalyze-module';
+import type { IRentalCalculatorData } from '@bpenwell/instantlyanalyze-module';
+import { UserStatus } from '@bpenwell/instantlyanalyze-module';
+import type { IRentalReportDatabaseEntry } from '@bpenwell/instantlyanalyze-module';
 import { USER_ID_INDEX } from '../utils/lambdaConstants';
 
 const client = new DynamoDBClient();

@@ -9,7 +9,7 @@ import {
     Header,
     LoadingBar,
     useAppContext,
-} from '@ben1000240/instantlyanalyze-components';
+} from '@bpenwell/instantlyanalyze-components';
 import {
     Home,
     PageNotFound,
@@ -32,11 +32,11 @@ import {
     ContactUs,
     ZillowScraperImportPage,
     SubscribeOutcome,
-} from '@ben1000240/instantlyanalyze-layouts';
+} from '@bpenwell/instantlyanalyze-layouts';
 import {
     TOOL_IDS,
     PAGE_PATH,
-} from '@ben1000240/instantlyanalyze-module';
+} from '@bpenwell/instantlyanalyze-module';
 import { applyMode, applyDensity, Density, Mode } from '@cloudscape-design/global-styles';
 import { useAuth0 } from '@auth0/auth0-react';
 

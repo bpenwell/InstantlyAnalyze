@@ -5,9 +5,9 @@ module.exports = {
   moduleNameMapper: {
     '\\.(css|less|scss|sass)$': 'identity-obj-proxy',
     '^@/(.*)$': '<rootDir>/src/$1',
-    '@ben1000240/instantlyanalyze-components': '<rootDir>/../InstantlyAnalyze-Components/src/index.ts',
-    '@ben1000240/instantlyanalyze-layouts': '<rootDir>/../InstantlyAnalyze-Layouts/src/index.ts',
-    '@ben1000240/instantlyanalyze-module': '<rootDir>/../InstantlyAnalyze-Module/src/index.ts',
+    '@bpenwell/instantlyanalyze-components': '<rootDir>/../InstantlyAnalyze-Components/src/index.ts',
+    '@bpenwell/instantlyanalyze-layouts': '<rootDir>/../InstantlyAnalyze-Layouts/src/index.ts',
+    '@bpenwell/instantlyanalyze-module': '<rootDir>/../InstantlyAnalyze-Module/src/index.ts',
     '@cloudscape-design/global-styles': '<rootDir>/src/__mocks__/@cloudscape-design/global-styles.ts',
   },
   transform: {
