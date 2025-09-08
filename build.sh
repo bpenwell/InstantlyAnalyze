@@ -53,6 +53,7 @@ show_help() {
   echo "  --prune            Prune npm dependencies before building"
   echo "  --auditFix         Run npm audit fix before building"
   echo "  --quiet            Suppress output messages"
+  echo "  --skipTests        Skip running tests during build"
   echo "  --buildLambda      Build Lambda functions in addition to building packages"
   echo "  --server           Skip building and directly start the servers"
   echo 
@@ -78,6 +79,7 @@ cleanNode=false
 quiet=false
 prune=false
 auditFix=false
+skipTests=false
 
 while [[ "$#" -gt 0 ]]; do
   case $1 in
@@ -90,6 +92,7 @@ while [[ "$#" -gt 0 ]]; do
     --quiet) quiet=true ;;
     --prune) prune=true ;;
     --auditFix) auditFix=true ;;
+    --skipTests) skipTests=true ;;
     *) 
       echo -e "${RED}Unknown option: $1${NC}"
       show_help
@@ -160,6 +163,14 @@ build_package() {
     if [ "$auditFix" = true ]; then
         echo -e "${GREEN}Running audit fix...${NC}"
         eval "npm audit fix $output_redirect" || { echo -e "${RED}Error: Failed to audit fix $package_name${NC}"; exit 1; }
+    fi
+
+    # Run tests before building (unless skipped)
+    if [ "$skipTests" = false ]; then
+        echo -e "${GREEN}Running tests...${NC}"
+        eval "npm test $output_redirect" || { echo -e "${RED}Error: Tests failed for $package_name${NC}"; exit 1; }
+    else
+        echo -e "${GREEN}Skipping tests...${NC}"
     fi
 
     echo -e "${GREEN}Running build...${NC}"
