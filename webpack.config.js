@@ -24,6 +24,9 @@ const SITE_MAP = [
   { name: 'contact-us', path: '/contact-us' },
   { name: 'blog', path: '/blog' },
   { name: 'blog-1-percent-rule', path: '/blog/1-percent-rule' },
+  { name: 'blog-cash-on-cash-return', path: '/blog/cash-on-cash-return' },
+  { name: 'blog-capitalization-rate', path: '/blog/capitalization-rate' },
+  { name: 'blog-50-percent-rule', path: '/blog/50-percent-rule' },
   { name: '_404', path: '/404' },
 ];
 
@@ -61,7 +64,12 @@ module.exports = {
         use: [
           'style-loader', // Injects styles into DOM
           'css-loader',   // Translates CSS into CommonJS
-          'sass-loader',  // Compiles Sass to CSS
+          {
+            loader: 'sass-loader',  // Compiles Sass to CSS
+            options: {
+              api: 'modern' // Use modern Sass API
+            }
+          }
         ],
       },
     ],
@@ -158,11 +166,6 @@ module.exports = {
       '@cloudscape-design/collection-hooks': path.resolve(__dirname, 'node_modules/@cloudscape-design/collection-hooks'),
       '@cloudscape-design/board-components': path.resolve(__dirname, 'node_modules/@cloudscape-design/board-components'),
       '@cloudscape-design/global-styles': path.resolve(__dirname, 'node_modules/@cloudscape-design/global-styles'),
-      /*'@mui/material': path.resolve(__dirname, 'node_modules/@mui/material'),
-      '@mui/icons-material': path.resolve(__dirname, 'node_modules/@mui/icons-material'),
-      '@mui/styled-engine': path.resolve(__dirname, 'node_modules/@mui/styled-engine'),*/
-      /*'@emotion/react': path.resolve(__dirname, 'node_modules/@emotion/react'),
-      '@emotion/styled': path.resolve(__dirname, 'node_modules/@emotion/styled'),*/
     },
   },
   devServer: {

@@ -18,7 +18,7 @@ module.exports = {
   transformIgnorePatterns: [
     'node_modules/(?!(@cloudscape-design)/)',
   ],
-  testMatch: ['**/tst/**/*.[jt]s?(x)'],
+  testMatch: ['**/tst/**/*.test.[jt]s?(x)', '**/tst/**/*.spec.[jt]s?(x)'],
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'json', 'node'],
   moduleDirectories: ['node_modules', '<rootDir>/src', '<rootDir>/tst'],
 }; 

@@ -41,7 +41,6 @@ import {
 } from '@bpenwell/instantlyanalyze-module';
 import { applyMode, applyDensity, Density, Mode } from '@cloudscape-design/global-styles';
 import { useAuth0 } from '@auth0/auth0-react';
-// import { HelmetProvider } from 'react-helmet-async';
 
 export const App = () => {
     const auth0 = useAuth0();
@@ -51,7 +50,7 @@ export const App = () => {
     const appMode = getAppMode();
     useEffect(() => {
         applyMode(appMode);
-    }, [appMode])
+    }, [appMode]);
 
     const wrapPageInLayout = (component: React.JSX.Element) => {
         return (
