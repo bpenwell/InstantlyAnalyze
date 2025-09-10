@@ -32,6 +32,8 @@ import {
     ContactUs,
     ZillowScraperImportPage,
     SubscribeOutcome,
+    BlogHome,
+    BlogPost,
 } from '@bpenwell/instantlyanalyze-layouts';
 import {
     TOOL_IDS,
@@ -39,6 +41,7 @@ import {
 } from '@bpenwell/instantlyanalyze-module';
 import { applyMode, applyDensity, Density, Mode } from '@cloudscape-design/global-styles';
 import { useAuth0 } from '@auth0/auth0-react';
+// import { HelmetProvider } from 'react-helmet-async';
 
 export const App = () => {
     const auth0 = useAuth0();
@@ -72,14 +75,14 @@ export const App = () => {
         );
     };
     return (
-        <ErrorBoundary>
-            <BrowserRouter>
+            <ErrorBoundary>
+                <BrowserRouter>
                 <div className='fullPage'>
                     <Routes>
                         <Route path={PAGE_PATH.HOME} element={wrapPageInLayout(
                                 <Home />
                             )} />
-                        <Route path='/product'>
+                        <Route path='/analyze'>
                             <Route path={TOOL_IDS.RENTAL_REPORT}>
                                 <Route path='edit/:id' element={
                                     wrapPageInLayout(
@@ -140,6 +143,11 @@ export const App = () => {
 
                         <Route path={PAGE_PATH.MISSION} element={wrapPageInLayout(<MissionPage />)} />
                         <Route path={PAGE_PATH.CONTACT_US} element={wrapPageInLayout(<ContactUs />)} />
+                        <Route path={PAGE_PATH.BLOG} element={wrapPageInLayout(<BlogHome />)} />
+                        <Route 
+                            path="/blog/*" 
+                            element={wrapPageInLayout(<BlogPost />)}
+                        />
                         <Route path={PAGE_PATH.DASHBOARD} element={  
                             wrapPageInLayout(
                                 <AuthenticatedPage>
@@ -155,7 +163,7 @@ export const App = () => {
                     </Routes>
                 </div>
                 <Footer />
-            </BrowserRouter>
-        </ErrorBoundary>
+                </BrowserRouter>
+            </ErrorBoundary>
     );
 }

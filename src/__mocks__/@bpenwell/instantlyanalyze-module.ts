@@ -1,7 +1,7 @@
 export const TOOL_IDS = {
-  RENTAL_REPORT: 'rental-report',
+  RENTAL_REPORT: 'properties',
   RENT_ESTIMATOR: 'rent-estimator',
-  ZILLOW_SCRAPER: 'zillow-scraper',
+  ZILLOW_SCRAPER: 'markets',
   BRRRR_CALCULATOR: 'brrrr-calculator',
   COMPREHENSIVE_PROPERTY_ANALYSIS: 'property-analysis',
   AI_REAL_ESTATE_AGENT: 'ai-agent',
