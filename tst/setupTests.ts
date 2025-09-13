@@ -32,29 +32,3 @@ Object.defineProperty(window, 'crypto', {
     getRandomValues: jest.fn(),
   },
 });
-
-// Mock fetch for Stripe and other HTTP requests
-global.fetch = jest.fn(() =>
-  Promise.resolve({
-    ok: true,
-    json: () => Promise.resolve({}),
-    text: () => Promise.resolve(''),
-  })
-) as jest.Mock;
-
-// Mock Stripe for tests
-jest.mock('stripe', () => {
-  return jest.fn().mockImplementation(() => ({
-    checkout: {
-      sessions: {
-        create: jest.fn(),
-        retrieve: jest.fn(),
-      },
-    },
-    subscriptions: {
-      create: jest.fn(),
-      retrieve: jest.fn(),
-      update: jest.fn(),
-    },
-  }));
-});

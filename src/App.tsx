@@ -28,6 +28,7 @@ import {
     Subscribe,
     HomeV2,
     PrivacyPolicyAndTerms,
+    StartNow,
     MissionPage,
     ContactUs,
     ZillowScraperImportPage,
@@ -141,6 +142,7 @@ export const App = () => {
                         } />
 
                         <Route path={PAGE_PATH.MISSION} element={wrapPageInLayout(<MissionPage />)} />
+                        <Route path={PAGE_PATH.START_NOW} element={wrapPageInLayout(<StartNow />)} />
                         <Route path={PAGE_PATH.CONTACT_US} element={wrapPageInLayout(<ContactUs />)} />
                         <Route path={PAGE_PATH.BLOG} element={wrapPageInLayout(<BlogHome />)} />
                         <Route 

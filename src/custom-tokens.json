@@ -2,5 +2,13 @@
     "TODO": "https://cloudscape.design/foundation/visual-foundation/theming/",
     "color-background-button-primary-default": "#1a73e8",
     "color-text-button-primary-default": "#ffffff",
-    "font-family-base": "'Open Sans', sans-serif"
+    "font-family-base": "'Open Sans', sans-serif",
+    "color-header-gradient-light-start": "rgba(248, 250, 252, 0.15)",
+    "color-header-gradient-light-end": "rgba(241, 245, 249, 0.25)",
+    "color-header-gradient-dark-start": "rgba(15, 23, 42, 0.2)",
+    "color-header-gradient-dark-end": "rgba(30, 41, 59, 0.3)",
+    "color-header-nav-background-light": "rgba(255, 255, 255, 0.95)",
+    "color-header-nav-background-dark": "rgba(15, 23, 42, 0.95)",
+    "color-header-border-light": "rgba(2, 151, 251, 0.15)",
+    "color-header-border-dark": "rgba(2, 151, 251, 0.25)"
 }
