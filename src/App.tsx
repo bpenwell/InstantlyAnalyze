@@ -12,6 +12,7 @@ import {
 } from '@bpenwell/instantlyanalyze-components';
 import {
     Home,
+    Welcome,
     PageNotFound,
     Dashboard,
     RentalCalculatorCreation,
@@ -63,8 +64,8 @@ export const App = () => {
         );
     }
     const smartAuthComponent = (component: React.JSX.Element) => {
-        const { id } = useParams();
-        return id === 'demo' ? (
+        const href = window.location.href;
+        return href.includes('demo') ? (
             wrapPageInLayout(component)
         ) : (
             wrapPageInLayout(
@@ -81,6 +82,9 @@ export const App = () => {
                     <Routes>
                         <Route path={PAGE_PATH.HOME} element={wrapPageInLayout(
                                 <Home />
+                            )} />
+                        <Route path={PAGE_PATH.WELCOME} element={wrapPageInLayout(
+                                <Welcome />
                             )} />
                         <Route path='/analyze'>
                             <Route path={TOOL_IDS.RENTAL_REPORT}>

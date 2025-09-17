@@ -115,14 +115,14 @@ module.exports = {
   plugins: [
     new HtmlWebpackPlugin({
       template: 'src/index.html',
-      title: 'InstantlyAnalyze - AI Real Estate Investment Analysis',
+      title: 'Free Rental Property Analysis Tool | InstantlyAnalyze',
       meta: {
-        'description': 'Save time and money with AI-powered real estate investment analysis tools.',
-        'og:title': 'InstantlyAnalyze - AI Real Estate Investment Analysis',
+        'description': 'Get free rental property analysis instantly. Calculate cash flow, ROI & cap rate in seconds. Start your free analysis now!',
+        'og:title': 'Free Rental Property Analysis Tool | InstantlyAnalyze',
         'og:type': 'website',
         'og:url': 'https://instantlyanalyze.com',
         'og:image': 'https://instantlyanalyze.com/public/logo.png',
-        'og:description': 'Save time and money with AI-powered real estate investment analysis tools.'
+        'og:description': 'Get free rental property analysis instantly. Calculate cash flow, ROI & cap rate in seconds. Start your free analysis now!'
       }
     }),
     new CopyWebpackPlugin({
@@ -166,6 +166,16 @@ module.exports = {
       '@cloudscape-design/collection-hooks': path.resolve(__dirname, 'node_modules/@cloudscape-design/collection-hooks'),
       '@cloudscape-design/board-components': path.resolve(__dirname, 'node_modules/@cloudscape-design/board-components'),
       '@cloudscape-design/global-styles': path.resolve(__dirname, 'node_modules/@cloudscape-design/global-styles'),
+      // Fix multiple instances warnings
+      'styled-components': path.resolve(__dirname, 'node_modules/styled-components'),
+      '@emotion/react': path.resolve(__dirname, 'node_modules/@emotion/react'),
+      '@emotion/styled': path.resolve(__dirname, 'node_modules/@emotion/styled'),
+      '@emotion/core': path.resolve(__dirname, 'node_modules/@emotion/core'),
+      '@emotion/css': path.resolve(__dirname, 'node_modules/@emotion/css'),
+      '@emotion/utils': path.resolve(__dirname, 'node_modules/@emotion/utils'),
+      '@emotion/cache': path.resolve(__dirname, 'node_modules/@emotion/cache'),
+      '@emotion/serialize': path.resolve(__dirname, 'node_modules/@emotion/serialize'),
+      '@emotion/weak-memoize': path.resolve(__dirname, 'node_modules/@emotion/weak-memoize'),
     },
   },
   devServer: {
