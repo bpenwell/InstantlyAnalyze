@@ -56,6 +56,7 @@ show_help() {
   echo "  --skipTests        Skip running tests during build"
   echo "  --buildLambda      Build Lambda functions in addition to building packages"
   echo "  --server           Skip building and directly start the servers"
+  echo "  --minify           Enable minification for webpack builds"
   echo 
   exit 0
 }
@@ -80,6 +81,7 @@ quiet=false
 prune=false
 auditFix=false
 skipTests=false
+minify=false
 
 while [[ "$#" -gt 0 ]]; do
   case $1 in
@@ -93,6 +95,7 @@ while [[ "$#" -gt 0 ]]; do
     --prune) prune=true ;;
     --auditFix) auditFix=true ;;
     --skipTests) skipTests=true ;;
+    --minify) minify=true ;;
     *) 
       echo -e "${RED}Unknown option: $1${NC}"
       show_help
@@ -174,7 +177,14 @@ build_package() {
     fi
 
     echo -e "${GREEN}Running build...${NC}"
-    eval "npm run build $output_redirect" || { echo -e "${RED}Error: Failed to build $package_name${NC}"; exit 1; }
+    
+    # Use minified build script if --minify flag is provided
+    if [ "$minify" = true ]; then
+        echo -e "${GREEN}Minification enabled for webpack build${NC}"
+        eval "npm run build:minify $output_redirect" || { echo -e "${RED}Error: Failed to build $package_name with minification${NC}"; exit 1; }
+    else
+        eval "npm run build $output_redirect" || { echo -e "${RED}Error: Failed to build $package_name${NC}"; exit 1; }
+    fi
 }
 
 # Function to watch a package

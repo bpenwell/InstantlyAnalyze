@@ -38,11 +38,23 @@ exports.handler = async (event: APIGatewayEvent | any) => {
     bodyJson = JSON.parse(event.body);
   } catch (err) {
     console.error('Failed to parse JSON body:', err);
-    return createResponse(400, JSON.stringify({ error: 'Invalid JSON input' }));
+    return createResponse(400, { error: 'Invalid JSON input' });
   }
 
   const { action, reportId, userId = undefined, reportData, savingExistingReport = false } = bodyJson;
   console.log(`Action: ${action}, ReportID: ${reportId}, UserID: ${userId}`);
+
+  // Validate required parameters for saveRentalReport
+  if (action === 'saveRentalReport') {
+    if (!userId) {
+      console.warn('Missing userId in saveRentalReport request');
+      return createResponse(400, { error: 'Missing userId' });
+    }
+    if (!reportData) {
+      console.warn('Missing reportData in saveRentalReport request');
+      return createResponse(400, { error: 'Missing reportData' });
+    }
+  }
 
   // Convert the reportData to the correct type
   const typedReportData: IRentalCalculatorData = reportData as IRentalCalculatorData;
@@ -60,7 +72,7 @@ exports.handler = async (event: APIGatewayEvent | any) => {
       return await getAllRentalReports(userId);
     default:
       console.warn(`Invalid action received: ${action}`);
-      return createResponse(400, JSON.stringify({ error: 'Invalid action' }));
+      return createResponse(400, { error: 'Invalid action' });
   }
 };
 
@@ -89,14 +101,14 @@ const changeRentalReportSharability = async (
     const typedItem = Item as IRentalReportDatabaseEntry;
     if (!typedItem) {
       console.log(`Report not found with reportId: ${reportId}`);
-      return createResponse(404, JSON.stringify({ error: 'Report not found' }));
+      return createResponse(404, { error: 'Report not found' });
     }
 
     if (typedItem.userId !== userId) {
       console.warn(
         `User mismatch. Found userId: ${typedItem.userId}, Request userId: ${userId}`
       );
-      return createResponse(200, JSON.stringify({ error: 'AccessDeniedException' }));
+      return createResponse(403, { error: 'AccessDeniedException' });
     }
 
     console.log('Updating report sharability...');
@@ -114,10 +126,10 @@ const changeRentalReportSharability = async (
     );
 
     console.log('Sharability updated successfully.');
-    return createResponse(200, JSON.stringify({ message: 'Sharability updated' }));
+    return createResponse(200, { message: 'Sharability updated' });
   } catch (error) {
     console.error('Error in changeRentalReportSharability:', error);
-    return createResponse(500, JSON.stringify({ error: 'Internal Server Error' }));
+    return createResponse(500, { error: 'Internal Server Error' });
   }
 };
 
@@ -143,22 +155,22 @@ const getRentalReport = async (reportId: string, userId: string) => {
 
     if (!entry) {
       console.log(`Report not found with reportId: ${reportId}`);
-      return createResponse(404, JSON.stringify({ error: 'Report not found' }));
+      return createResponse(404, { error: 'Report not found' });
     }
 
     console.log('Checking if user can access or if report is shareable...');
     if (entry.reportData.isShareable || entry.userId === userId) {
       console.log('User can access this report. Returning report data...');
-      return createResponse(200, JSON.stringify(entry));
+      return createResponse(200, entry);
     }
 
     console.warn(
       `Access denied. Report is not shareable and userId does not match. userId: ${userId}`
     );
-    return createResponse(200, JSON.stringify({ error: 'AccessDeniedException' }));
+    return createResponse(403, { error: 'AccessDeniedException' });
   } catch (error) {
     console.error('Error in getRentalReport:', error);
-    return createResponse(500, JSON.stringify({ error: 'Internal Server Error' }));
+    return createResponse(500, { error: 'Internal Server Error' });
   }
 };
 
@@ -191,7 +203,7 @@ const saveRentalReport = async (
         console.warn(
           `User mismatch when updating. Found userId: ${typedItem.userId}, Request userId: ${userId}`
         );
-        return createResponse(200, JSON.stringify({ error: 'AccessDeniedException' }));
+        return createResponse(403, { error: 'AccessDeniedException' });
       }
 
       console.log('Updating existing report...');
@@ -209,16 +221,22 @@ const saveRentalReport = async (
       );
 
       console.log('Report updated successfully.');
-      return createResponse(200, JSON.stringify({ message: 'Report updated' }));
+      return createResponse(200, { message: 'Report updated' });
     }
     else {
+      // If we're trying to update an existing report but it doesn't exist, return 404
+      if (savingExistingReport) {
+        console.log(`Report not found with reportId: ${reportId} for update`);
+        return createResponse(404, { error: 'Report not found' });
+      }
+      
       console.log('Report does not exist. Creating new report...');
       const userConfigs = await getUserConfigs(ddbDocClient, userId);
 
-      if (userConfigs?.subscription.status === UserStatus.FREE) {
+      if (userConfigs?.subscription.status === 'free') {
         if (!userConfigs?.freeReportsAvailable || userConfigs?.freeReportsAvailable <= 0) {
           console.warn(`No free reports available for userId: ${userId}`);
-          return createResponse(200, JSON.stringify({ error: 'NoFreeReportsLeftException' }));
+          return createResponse(200, { error: 'NoFreeReportsLeftException' });
         }
         else if (userConfigs?.freeReportsAvailable > 0 && !savingExistingReport) {
           updateUserConfigs(ddbDocClient, {
@@ -240,11 +258,11 @@ const saveRentalReport = async (
       );
 
       console.log('Report created successfully.');
-      return createResponse(200, JSON.stringify({ message: 'Report created' }));
+      return createResponse(200, { message: 'Report created' });
     }
   } catch (error) {
     console.error('Error in saveRentalReport:', error);
-    return createResponse(500, JSON.stringify({ error: 'Internal Server Error' }));
+    return createResponse(500, { error: 'Internal Server Error' });
   }
 };
 
@@ -265,14 +283,14 @@ const deleteRentalReport = async (reportId: string, userId: string) => {
     const typedItem = Item as IRentalReportDatabaseEntry;
     if (!typedItem) {
       console.log(`Report not found with reportId: ${reportId}`);
-      return createResponse(404, JSON.stringify({ error: 'Report not found' }));
+      return createResponse(404, { error: 'Report not found' });
     }
 
     if (typedItem.userId !== userId) {
       console.warn(
         `User mismatch when deleting. Found userId: ${typedItem.userId}, Request userId: ${userId}`
       );
-      return createResponse(200, JSON.stringify({ error: 'AccessDeniedException' }));
+      return createResponse(403, { error: 'AccessDeniedException' });
     }
 
     console.log('Deleting report...');
@@ -286,10 +304,10 @@ const deleteRentalReport = async (reportId: string, userId: string) => {
     );
 
     console.log('Report deleted successfully.');
-    return createResponse(200, JSON.stringify({ message: 'Report deleted' }));
+    return createResponse(200, { message: 'Report deleted' });
   } catch (error) {
     console.error('Error in deleteRentalReport:', error);
-    return createResponse(500, JSON.stringify({ error: 'Internal Server Error' }));
+    return createResponse(500, { error: 'Internal Server Error' });
   }
 };
 
@@ -312,7 +330,7 @@ const getAllRentalReports = async (userId: string) => {
 
     if (!typedItems || typedItems.length === 0) {
       console.log(`No reports found for userId: ${userId}`);
-      return createResponse(200, JSON.stringify(new Map<string,IRentalCalculatorData>()));
+      return createResponse(200, {});
     }
     
     // Call requestRentalReport in parallel for each typedItem.
@@ -324,16 +342,18 @@ const getAllRentalReports = async (userId: string) => {
     // Build a map of reportId -> the corresponding report data
     const reportsMap = typedItems.reduce<Record<string, IRentalCalculatorData>>(
       (acc, item, index) => {
-        acc[item.reportId] = reportsArray[index].reportData;
+        if (reportsArray[index]) {
+          acc[item.reportId] = reportsArray[index].reportData;
+        }
         return acc;
       },
       {}
     );
 
     console.log('Reports found. Returning reports...');
-    return createResponse(200, JSON.stringify(reportsMap));
+    return createResponse(200, reportsMap);
   } catch (error) {
     console.error('Error in getAllRentalReports:', error);
-    return createResponse(500, JSON.stringify({ error: 'Internal Server Error' }));
+    return createResponse(500, { error: 'Internal Server Error' });
   }
 };

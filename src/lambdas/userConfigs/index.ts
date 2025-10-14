@@ -1,37 +1,13 @@
 import { APIGatewayEvent, APIGatewayProxyResult, Context } from 'aws-lambda';
 import { PutCommand } from '@aws-sdk/lib-dynamodb';
 import { DynamoDBClient } from '@aws-sdk/client-dynamodb';
-import { createResponse, getUserConfigs, updateUserConfigs } from '../utils/lambdaUtils';
+import { createResponse, getUserConfigs, updateUserConfigs, deleteUserConfigs, createUserConfig } from '../utils/lambdaUtils';
 import { defaultRentalInputs, UserStatus } from '@bpenwell/instantlyanalyze-module';
 import type { IUserConfigs } from '@bpenwell/instantlyanalyze-module';
 import { USER_CONFIGS_TABLE_NAME } from '../utils/lambdaConstants';
 
 const ddbClient = new DynamoDBClient({});
 
-const createUserConfig = async (userId: string): Promise<IUserConfigs> => {
-  const newUserConfig: IUserConfigs = {
-    userId,
-    subscription: {
-      status: UserStatus.FREE,
-    },
-    freeZillowScrapesAvailable: 1,
-    freeReportsAvailable: 5,
-    preferences: {
-      tablePageSize: 10,
-      defaultRentalInputs: defaultRentalInputs,
-    },
-  };
-
-  const putParams = {
-    TableName: USER_CONFIGS_TABLE_NAME,
-    Item: newUserConfig,
-  };
-
-  const putCommand = new PutCommand(putParams);
-  await ddbClient.send(putCommand);
-
-  return newUserConfig;
-};
 
 /**
  * Lambda entry point
@@ -55,11 +31,21 @@ export const handler = async (
 
     // Parse the request body
     const body = JSON.parse(event.body || '{}');
-    const userId = body.userId;
-
-    if (!userId) {
-      console.log('Missing userId in request body');
-      return createResponse(400, { message: 'Missing userId in request body.' }, true);
+    
+    // For GET requests, get userId from pathParameters, otherwise from body
+    let userId: string;
+    if (method === 'GET') {
+      userId = event.pathParameters?.userId;
+      if (!userId) {
+        console.log('Missing userId in path parameters');
+        return createResponse(400, { message: 'User ID is required' }, true);
+      }
+    } else {
+      userId = body.userId;
+      if (!userId) {
+        console.log('Missing userId in request body');
+        return createResponse(400, { message: 'Missing userId in request body.' }, true);
+      }
     }
 
     console.log('User ID:', userId);
@@ -78,24 +64,10 @@ export const handler = async (
           }, true);
         }
         else {
-          throw createResponse(500, error, true);
-        }
-      }
-    }
-    if (path.includes('getUser')) {
-      console.log('Fetching user configs');
-      try {
-        const userConfigs = await getUserConfigs(ddbClient, userId);
-        return createResponse(200, userConfigs, true);
-      }
-      catch (error: any) {
-        if (error.message === 'User not found') {
-          return createResponse(200, {
-            message: 'User not found',
+          return createResponse(500, {
+            message: 'Internal Server Error',
+            error: error.message,
           }, true);
-        }
-        else {
-          throw createResponse(500, error, true);
         }
       }
     } else if (path.includes('updateUser')) {
@@ -117,14 +89,44 @@ export const handler = async (
           }, true);
         }
         else {
-          throw createResponse(500, error, true);
+          return createResponse(500, {
+            message: 'Internal Server Error',
+            error: error.message,
+          }, true);
+        }
+      }
+    } else if (path.includes('deleteUser')) {
+      console.log('Deleting user configs');
+      try {
+        await deleteUserConfigs(ddbClient, userId);
+        return createResponse(200, { message: 'User deleted successfully' }, true);
+      }
+      catch (error: any) {
+        if (error.message === 'User not found') {
+          return createResponse(200, {
+            message: 'User not found',
+          }, true);
+        }
+        else {
+          return createResponse(500, {
+            message: 'Internal Server Error',
+            error: error.message,
+          }, true);
         }
       }
     } else if (path.includes('createUser')) {
       console.log('Creating user config');
-      const newUserConfig = await createUserConfig(userId);
-      console.log('New user config created:', newUserConfig);
-      return createResponse(201, newUserConfig, true);
+      try {
+        const newUserConfig = await createUserConfig(ddbClient, userId);
+        console.log('New user config created:', newUserConfig);
+        return createResponse(201, newUserConfig, true);
+      }
+      catch (error: any) {
+        return createResponse(500, {
+          message: 'Internal Server Error',
+          error: error.message,
+        }, true);
+      }
     }
 
     // Handle other routes if needed...

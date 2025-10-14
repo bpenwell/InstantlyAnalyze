@@ -51,6 +51,7 @@
   "scripts": {
     "dev": "webpack serve --mode development --open",
     "build": "webpack --mode production",
+    "build:minify": "webpack --mode production",
     "build:libs": "cd ../InstantlyAnalyze-Module && npm run build && cd ../InstantlyAnalyze-Components && npm run build && cd ../InstantlyAnalyze-Layouts && npm run build && cd ../InstantlyAnalyze",
     "test": "jest",
     "lint": "eslint .",

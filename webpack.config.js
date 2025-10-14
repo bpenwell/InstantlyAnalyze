@@ -30,17 +30,23 @@ const SITE_MAP = [
   { name: '_404', path: '/404' },
 ];
 
-module.exports = {
+module.exports = (env, argv) => ({
   entry: './src/index.tsx',
   output: {
     // Use hashed filenames for cache-busting in production, simple names in development
-    filename: process.env.NODE_ENV === 'production' ? '[name].[contenthash].js' : '[name].js',
-    chunkFilename: process.env.NODE_ENV === 'production' ? '[name].[contenthash].js' : '[name].js',
+    filename: argv.mode === 'production' ? '[name].[contenthash].js' : '[name].js',
+    chunkFilename: argv.mode === 'production' ? '[name].[contenthash].js' : '[name].js',
     path: path.resolve(__dirname, 'dist'),
     publicPath: '/',
   },
-  mode: process.env.NODE_ENV === 'production' ? 'production' : 'development',
-  devtool: 'source-map',
+  mode: argv.mode || 'development',
+  devtool: argv.mode === 'production' ? false : 'source-map',
+  optimization: {
+    minimize: argv.mode === 'production',
+    minimizer: argv.mode === 'production' ? [
+      '...', // This extends the default minimizers
+    ] : [],
+  },
   module: {
     rules: [
       {
@@ -115,14 +121,14 @@ module.exports = {
   plugins: [
     new HtmlWebpackPlugin({
       template: 'src/index.html',
-      title: 'Free Rental Property Analysis Tool | InstantlyAnalyze',
+      title: 'Property Analyzer & Real Estate Analyzer | Free Rental Properties Analysis Tool',
       meta: {
-        'description': 'Get free rental property analysis instantly. Calculate cash flow, ROI & cap rate in seconds. Start your free analysis now!',
-        'og:title': 'Free Rental Property Analysis Tool | InstantlyAnalyze',
+        'description': 'Free property analyzer and real estate analyzer tool. Analyze rental properties with comprehensive ROI, cash flow, and cap rate calculations. Start your free analysis now!',
+        'og:title': 'Property Analyzer & Real Estate Analyzer | Free Rental Properties Analysis Tool',
         'og:type': 'website',
         'og:url': 'https://instantlyanalyze.com',
         'og:image': 'https://instantlyanalyze.com/public/logo.png',
-        'og:description': 'Get free rental property analysis instantly. Calculate cash flow, ROI & cap rate in seconds. Start your free analysis now!'
+        'og:description': 'Free property analyzer and real estate analyzer tool. Analyze rental properties with comprehensive ROI, cash flow, and cap rate calculations.'
       }
     }),
     new CopyWebpackPlugin({
@@ -190,4 +196,4 @@ module.exports = {
       },
     },
   },
-};
+});

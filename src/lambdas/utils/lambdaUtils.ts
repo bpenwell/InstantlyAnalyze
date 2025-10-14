@@ -1,9 +1,10 @@
 import { DynamoDB, DynamoDBClient, ReturnValue } from '@aws-sdk/client-dynamodb';
-import { DynamoDBDocument, GetCommand, PutCommand } from '@aws-sdk/lib-dynamodb';
+import { DynamoDBDocument, GetCommand, PutCommand, DeleteCommand } from '@aws-sdk/lib-dynamodb';
 import { APIGatewayProxyResult } from 'aws-lambda';
 import { addDays, formatISO } from 'date-fns';
 import { USER_CONFIGS_TABLE_NAME } from './lambdaConstants';
 import type { IUserConfigs } from '@bpenwell/instantlyanalyze-module';
+import { defaultRentalInputs } from '@bpenwell/instantlyanalyze-module';
 
 const dynamo = DynamoDBDocument.from(new DynamoDB());
 
@@ -130,7 +131,10 @@ export const getHeaders = () => {
  * Utility: Create an HTTP response
  */
 export const createResponse = (statusCode: number, body: any, stringifyBody: boolean = false): APIGatewayProxyResult => {
-  if (stringifyBody) {
+  // If body is already a string, use it as-is
+  // If body is an object and stringifyBody is true, stringify it
+  // If body is an object and stringifyBody is false, stringify it anyway (default behavior)
+  if (typeof body !== 'string') {
     body = JSON.stringify(body);
   }
   const reponse = {
@@ -167,4 +171,46 @@ export const updateUserConfigs = async (ddbClient: DynamoDBClient, newUserConfig
   const putCommand = new PutCommand(putParams);
   await ddbClient.send(putCommand);
   return true;
+};
+
+export const deleteUserConfigs = async (ddbClient: DynamoDBClient, userId: string): Promise<boolean | null> => {
+  const deleteParams = {
+    TableName: USER_CONFIGS_TABLE_NAME,
+    Key: { userId },
+  };
+
+  try {
+    const deleteCommand = new DeleteCommand(deleteParams);
+    await ddbClient.send(deleteCommand);
+    return true;
+  } catch (error) {
+    console.error('Error deleting user configs:', error);
+    return null;
+  }
+};
+
+export const createUserConfig = async (ddbClient: DynamoDBClient, userId: string): Promise<IUserConfigs> => {
+  const newUserConfig: IUserConfigs = {
+    userId,
+    subscription: {
+      status: 'free',
+    },
+    freeZillowScrapesAvailable: 1,
+    freeReportsAvailable: 5,
+    hasSeenWelcomePage: false,
+    preferences: {
+      tablePageSize: 10,
+      defaultRentalInputs: defaultRentalInputs,
+    },
+  };
+
+  const putParams = {
+    TableName: USER_CONFIGS_TABLE_NAME,
+    Item: newUserConfig,
+  };
+
+  const putCommand = new PutCommand(putParams);
+  await ddbClient.send(putCommand);
+
+  return newUserConfig;
 };

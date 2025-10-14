@@ -46,9 +46,9 @@ export const handler = async (
           const subscription = await stripe.subscriptions.retrieve(subscriptionId);
           const priceId = subscription.items.data[0].price.id;
           // 2. Determine plan name or billing cycle
-          let billingCycle = BillingCycle.MONTHLY;
+          let billingCycle = 'monthly';
           if (priceId === process.env.STRIPE_YEARLY_PRICE_ID) {
-            billingCycle = BillingCycle.YEARLY;
+            billingCycle = 'yearly';
           }
           // Mark user as PRO
           const currentUserConfig = await getUserConfigs(ddbClient, userId);
@@ -58,7 +58,7 @@ export const handler = async (
             subscription: {
               ...currentUserConfig?.subscription,
               subscriptionId,
-              status: UserStatus.PRO,
+              status: 'pro',
               billingCycle: billingCycle,
             },
             preferences: {
@@ -121,7 +121,7 @@ export const handler = async (
             },
             subscription: {
               ...currentUserConfig?.subscription!,
-              status: UserStatus.FREE,
+              status: 'free',
               subscriptionId: subscription.id,
               current_period_end: undefined,
               cancel_at_period_end: false,
@@ -159,7 +159,7 @@ export const handler = async (
 
     // Select the price ID based on the billing cycle
     let priceId = '';
-    if (billingCycle === BillingCycle.YEARLY) {
+    if (billingCycle === 'yearly') {
       priceId = process.env.STRIPE_YEARLY_PRICE_ID as string;
     } else {
       priceId = process.env.STRIPE_MONTHLY_PRICE_ID as string;

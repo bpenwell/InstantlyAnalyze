@@ -50,6 +50,7 @@ export const App = () => {
     const { getAppDensity, getAppMode } = useAppContext();
     applyDensity(getAppDensity());
     const appMode = getAppMode();
+    
     useEffect(() => {
         applyMode(appMode);
     }, [appMode]);
@@ -146,7 +147,7 @@ export const App = () => {
                         } />
 
                         <Route path={PAGE_PATH.MISSION} element={wrapPageInLayout(<MissionPage />)} />
-                        <Route path={PAGE_PATH.START_NOW} element={wrapPageInLayout(<StartNow />)} />
+                        {/*<Route path={PAGE_PATH.START_NOW} element={wrapPageInLayout(<StartNow />)} />*/}
                         <Route path={PAGE_PATH.CONTACT_US} element={wrapPageInLayout(<ContactUs />)} />
                         <Route path={PAGE_PATH.BLOG} element={wrapPageInLayout(<BlogHome />)} />
                         <Route 
