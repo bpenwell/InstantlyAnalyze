@@ -9,10 +9,13 @@ import {
     Header,
     LoadingBar,
     useAppContext,
+    NotificationProvider,
+    NotificationBanner,
 } from '@bpenwell/instantlyanalyze-components';
 import {
     Home,
     Welcome,
+    Login,
     PageNotFound,
     Dashboard,
     RentalCalculatorCreation,
@@ -78,98 +81,102 @@ export const App = () => {
     };
     return (
             <ErrorBoundary>
-                <BrowserRouter>
-                <div className='fullPage'>
-                    <Routes>
-                        <Route path={PAGE_PATH.HOME} element={wrapPageInLayout(
-                                <Home />
-                            )} />
-                        <Route path={PAGE_PATH.WELCOME} element={wrapPageInLayout(
-                                <Welcome />
-                            )} />
-                        <Route path='/analyze'>
-                            <Route path={TOOL_IDS.RENTAL_REPORT}>
-                                <Route path='edit/:id' element={
-                                    wrapPageInLayout(
-                                        <AuthenticatedPage>
-                                            <RentalCalculatorCreation auth0={auth0} isEditPage={true} />
-                                        </AuthenticatedPage>
-                                    )
-                                }/>
-                                <Route path='createv3' element={
-                                    wrapPageInLayout(
-                                        <AuthenticatedPage>
-                                            <RentalCalculatorCreationV3 />
-                                        </AuthenticatedPage>
-                                    )
-                                }/>
-                                <Route path='view' element={
-                                    wrapPageInLayout(
-                                        <AuthenticatedPage>
-                                            <RentalCalculatorViewV3 />
-                                        </AuthenticatedPage>
-                                    )
-                                }/>
-                                <Route path='view/:id' element={
-                                    smartAuthComponent(<RentalCalculator isShareView={false} />)
-                                }/>
-                                <Route path='share/:id' element={
-                                    wrapPageInLayout(
-                                        <RentalCalculator isShareView={true} />
-                                    )
-                                }/>
-                                <Route index element={wrapPageInLayout(<RentalCalculatorHome />)} />
+                <NotificationProvider>
+                    <BrowserRouter>
+                    <div className='fullPage'>
+                        <Routes>
+                            <Route path={PAGE_PATH.HOME} element={wrapPageInLayout(
+                                    <Home />
+                                )} />
+                            <Route path={PAGE_PATH.WELCOME} element={wrapPageInLayout(
+                                    <Welcome />
+                                )} />
+                            <Route path={PAGE_PATH.LOGIN} element={<Login />} />
+                            <Route path='/analyze'>
+                                <Route path={TOOL_IDS.RENTAL_REPORT}>
+                                    <Route path='edit/:id' element={
+                                        wrapPageInLayout(
+                                            <AuthenticatedPage>
+                                                <RentalCalculatorCreation auth0={auth0} isEditPage={true} />
+                                            </AuthenticatedPage>
+                                        )
+                                    }/>
+                                    <Route path='createv3' element={
+                                        wrapPageInLayout(
+                                            <AuthenticatedPage>
+                                                <RentalCalculatorCreationV3 />
+                                            </AuthenticatedPage>
+                                        )
+                                    }/>
+                                    <Route path='view' element={
+                                        wrapPageInLayout(
+                                            <AuthenticatedPage>
+                                                <RentalCalculatorViewV3 />
+                                            </AuthenticatedPage>
+                                        )
+                                    }/>
+                                    <Route path='view/:id' element={
+                                        smartAuthComponent(<RentalCalculator isShareView={false} />)
+                                    }/>
+                                    <Route path='share/:id' element={
+                                        wrapPageInLayout(
+                                            <RentalCalculator isShareView={true} />
+                                        )
+                                    }/>
+                                    <Route index element={wrapPageInLayout(<RentalCalculatorHome />)} />
+                                </Route>
+                                <Route path={TOOL_IDS.RENT_ESTIMATOR} element={wrapPageInLayout(<RentEstimatorTool />)}/>
+                                <Route path={TOOL_IDS.ZILLOW_SCRAPER}>
+                                    <Route path='import' element={
+                                        wrapPageInLayout(
+                                            <ZillowScraperImportPage />
+                                        )
+                                    }/>
+                                    <Route index element={wrapPageInLayout(<ZillowScraperLandingPage />)} />
+                                </Route>
+                                <Route path={TOOL_IDS.BRRRR_CALCULATOR} element={wrapPageInLayout(<BRRRRCalculatorTool />)}/>
+                                <Route path={TOOL_IDS.COMPREHENSIVE_PROPERTY_ANALYSIS} element={wrapPageInLayout(<ComprehensivePropertyAnalysis />)}/>
+                                <Route path={TOOL_IDS.AI_REAL_ESTATE_AGENT} element={wrapPageInLayout(<AIRealEstateAgent />)}/>
                             </Route>
-                            <Route path={TOOL_IDS.RENT_ESTIMATOR} element={wrapPageInLayout(<RentEstimatorTool />)}/>
-                            <Route path={TOOL_IDS.ZILLOW_SCRAPER}>
-                                <Route path='import' element={
-                                    wrapPageInLayout(
-                                        <ZillowScraperImportPage />
-                                    )
-                                }/>
-                                <Route index element={wrapPageInLayout(<ZillowScraperLandingPage />)} />
-                            </Route>
-                            <Route path={TOOL_IDS.BRRRR_CALCULATOR} element={wrapPageInLayout(<BRRRRCalculatorTool />)}/>
-                            <Route path={TOOL_IDS.COMPREHENSIVE_PROPERTY_ANALYSIS} element={wrapPageInLayout(<ComprehensivePropertyAnalysis />)}/>
-                            <Route path={TOOL_IDS.AI_REAL_ESTATE_AGENT} element={wrapPageInLayout(<AIRealEstateAgent />)}/>
-                        </Route>
-                        <Route path={PAGE_PATH.PROFILE} element={wrapPageInLayout(<Profile />)} />
+                            <Route path={PAGE_PATH.PROFILE} element={wrapPageInLayout(<Profile />)} />
 
-                        <Route path={PAGE_PATH.SUBSCRIBE} element={
-                            wrapPageInLayout(
-                                <Subscribe />
-                            )
-                        } />
-                        <Route path={PAGE_PATH.SUBSCRIBE_OUTCOME} element={
-                            wrapPageInLayout(
-                                <SubscribeOutcome />
-                            )
-                        } />
+                            <Route path={PAGE_PATH.SUBSCRIBE} element={
+                                wrapPageInLayout(
+                                    <Subscribe />
+                                )
+                            } />
+                            <Route path={PAGE_PATH.SUBSCRIBE_OUTCOME} element={
+                                wrapPageInLayout(
+                                    <SubscribeOutcome />
+                                )
+                            } />
 
-                        <Route path={PAGE_PATH.MISSION} element={wrapPageInLayout(<MissionPage />)} />
-                        {/*<Route path={PAGE_PATH.START_NOW} element={wrapPageInLayout(<StartNow />)} />*/}
-                        <Route path={PAGE_PATH.CONTACT_US} element={wrapPageInLayout(<ContactUs />)} />
-                        <Route path={PAGE_PATH.BLOG} element={wrapPageInLayout(<BlogHome />)} />
-                        <Route 
-                            path="/blog/*" 
-                            element={wrapPageInLayout(<BlogPost />)}
-                        />
-                        <Route path={PAGE_PATH.DASHBOARD} element={  
-                            wrapPageInLayout(
-                                <AuthenticatedPage>
-                                    <Dashboard />
-                                </AuthenticatedPage>
-                            )
-                        } />
-                        <Route path={PAGE_PATH.PRIVACY_POLICY_AND_TERMS} element={wrapPageInLayout(<PrivacyPolicyAndTerms />)} />
-                        <Route path='*' element={
-                            wrapPageInLayout(
-                                <PageNotFound />
-                            )} />
-                    </Routes>
-                </div>
-                <Footer />
-                </BrowserRouter>
+                            <Route path={PAGE_PATH.MISSION} element={wrapPageInLayout(<MissionPage />)} />
+                            {/*<Route path={PAGE_PATH.START_NOW} element={wrapPageInLayout(<StartNow />)} />*/}
+                            <Route path={PAGE_PATH.CONTACT_US} element={wrapPageInLayout(<ContactUs />)} />
+                            <Route path={PAGE_PATH.BLOG} element={wrapPageInLayout(<BlogHome />)} />
+                            <Route
+                                path="/blog/*"
+                                element={wrapPageInLayout(<BlogPost />)}
+                            />
+                            <Route path={PAGE_PATH.DASHBOARD} element={
+                                wrapPageInLayout(
+                                    <AuthenticatedPage>
+                                        <Dashboard />
+                                    </AuthenticatedPage>
+                                )
+                            } />
+                            <Route path={PAGE_PATH.PRIVACY_POLICY_AND_TERMS} element={wrapPageInLayout(<PrivacyPolicyAndTerms />)} />
+                            <Route path='*' element={
+                                wrapPageInLayout(
+                                    <PageNotFound />
+                                )} />
+                        </Routes>
+                    </div>
+                    <Footer />
+                    <NotificationBanner />
+                    </BrowserRouter>
+                </NotificationProvider>
             </ErrorBoundary>
     );
 }
