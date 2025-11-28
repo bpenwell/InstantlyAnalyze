@@ -136,6 +136,7 @@ module.exports = (env, argv) => ({
         { from: 'src/robots.txt', to: 'robots.txt' },
         { from: 'public', to: 'public' },
         { from: 'public/manifest.json', to: 'manifest.json' },
+        { from: 'src/lambdas/zip.js', to: 'lambdas/zip.js' },
       ],
     }),
     new MiniCssExtractPlugin({

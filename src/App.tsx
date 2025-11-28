@@ -103,9 +103,7 @@ export const App = () => {
                                     }/>
                                     <Route path='createv3' element={
                                         wrapPageInLayout(
-                                            <AuthenticatedPage>
-                                                <RentalCalculatorCreationV3 />
-                                            </AuthenticatedPage>
+                                            <RentalCalculatorCreationV3 />
                                         )
                                     }/>
                                     <Route path='view' element={
@@ -125,7 +123,13 @@ export const App = () => {
                                     }/>
                                     <Route index element={wrapPageInLayout(<RentalCalculatorHome />)} />
                                 </Route>
-                                <Route path={TOOL_IDS.RENT_ESTIMATOR} element={wrapPageInLayout(<RentEstimatorTool />)}/>
+                                <Route path={TOOL_IDS.RENT_ESTIMATOR} element={
+                                    wrapPageInLayout(
+                                        <AuthenticatedPage>
+                                            <RentEstimatorTool />
+                                        </AuthenticatedPage>
+                                    )
+                                }/>
                                 <Route path={TOOL_IDS.ZILLOW_SCRAPER}>
                                     <Route path='import' element={
                                         wrapPageInLayout(

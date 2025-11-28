@@ -120,7 +120,7 @@ build_lambda() {
     fi
 
     echo -e "${GREEN}Running buildLambda...${NC}"
-    eval "npm run buildLambda $output_redirect" || { echo -e "${RED}Error: Failed to build $package_name${NC}"; exit 1; }
+    eval "npm run build:lambda $output_redirect" || { echo -e "${RED}Error: Failed to build $package_name${NC}"; exit 1; }
 }
 
 # Function to build a package

@@ -197,6 +197,7 @@ export const createUserConfig = async (ddbClient: DynamoDBClient, userId: string
     },
     freeZillowScrapesAvailable: 1,
     freeReportsAvailable: 5,
+    freeRentEstimatesAvailable: 5,
     hasSeenWelcomePage: false,
     preferences: {
       tablePageSize: 10,
